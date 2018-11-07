@@ -1,0 +1,10 @@
+{
+  "port": "8090",
+  "mongo_server": "mongodb://host:port/database",
+  "allow_origin": "Allow Origin for Web Service",
+  "twitter_consumer_key": "Twitter API Consumer Key",
+  "twitter_consumer_secret": "Twitter API Consumer Secret",
+  "twitter_access_token_key": "Twitter API Access Token Key",
+  "twitter_access_token_secret": "Twitter API Access Token Secret",
+  "twitter_screen_name": "Twitter Display Name"
+}

@@ -1,0 +1,25 @@
+version: "3"
+services:
+  mongo:
+    image: mongo:latest
+    environment:
+    - MONGO_DATA_DIR=/data/db
+    volumes:
+    - .data/db:/data/db
+    command: mongod --smallfiles
+  web:
+    image: itcrowd-server:latest
+    restart: "on-failure"
+    ports:
+    - 8090:8090
+    depends_on:
+    - mongo
+    environment:
+      PORT: "8090"
+      MONGOSERVER: "mongodb://mongo:27017/itcrowd"
+      ALLOWORIGIN: "*"
+      TWITTERCONSUMERKEY: "twitterconsumerkey"
+      TWITTERCONSUMERSECRET: "twitterconsumersecret"
+      TWITTERACCESSTOKENKEY: "twitteraccesstokenkey"
+      TWITTERACCESSTOKENSECRET: "twitteraccesstokensecret"
+      TWITTERSCREENNAME: "smithzsolt"
