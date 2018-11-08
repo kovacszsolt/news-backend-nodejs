@@ -70,8 +70,9 @@ const findTwitterId = (__twitterId) => {
 const findCategory = (__categoryId) => {
     return dbModel.model.find({twitter_category: __categoryId}, (error, result) => {
         return result;
-    }).populate('twitter_category twitter_tweet'
-    );
+    }).populate({
+        path: 'twitter_tweet twitter_category twitter_content'
+    })
 }
 
 const find = (__args) => {
