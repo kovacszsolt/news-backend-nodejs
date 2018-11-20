@@ -6,9 +6,8 @@ const fs = require('fs-extra');
 const PUBLIC = './_public/images';
 
 const __sizes = [
-    {title: 'size1', width: 300},
-    {title: 'size2', width: 600},
-    {title: 'size3', width: 900}
+    {title: 'size1', width: 614},
+    {title: 'size2', width: 760}
 ];
 
 const resize = (file, size, tweet_id) => {
