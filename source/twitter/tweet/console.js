@@ -15,8 +15,7 @@ yargs.console.command('findcategoryid', 'List Category by id TWITTER', {
         console.log(findCategoryResult);
         process.exit(0);
     }).catch((findCategoryError) => {
-        console.log(findCategoryError);
-        process.exit(0);
+        util.exit(findCategoryError);
     });
 });
 
@@ -30,9 +29,8 @@ yargs.console.command('findcategory', 'List Category TWITTER', {
             twitter.find({twitter_category: categordId}).then((twitterResult) => {
                 console.log(twitterResult);
                 process.exit(0);
-            }).catch((err) => {
-                console.log(err);
-                process.exit(0);
+            }).catch((twitterError) => {
+                util.exit(twitterError);
 
             });
         } else {
@@ -41,8 +39,8 @@ yargs.console.command('findcategory', 'List Category TWITTER', {
         }
 
 
-    }).catch((err) => {
-        console.log(err);
+    }).catch((categoryError) => {
+        util.exit(categoryError);
     });
 });
 

@@ -18,8 +18,8 @@ yargs.console.command('add', 'Add Twitter Content', {
 }, (argv) => {
     twitter.add(argv.title, argv.url, argv.content, argv.imageurl).then((addResult) => {
         console.log(addResult);
-    }).catch((addResult) => {
-        console.log(addResult);
+    }).catch((addError) => {
+        util.exit(addError);
     })
 });
 
@@ -33,8 +33,8 @@ yargs.console.command('update', 'Updarte Twitter Content', {
 }, (argv) => {
     twitter.update(argv.id, argv.title, argv.url, argv.content, argv.imageurl).then((addResult) => {
         console.log(addResult);
-    }).catch((addResult) => {
-        console.log(addResult);
+    }).catch((addError) => {
+        util.exit(addError);
     })
 });
 
@@ -43,8 +43,8 @@ yargs.console.command('remove', 'Remove Twitter Content', {
 }, (argv) => {
     twitter.remove(argv.id).then((addResult) => {
         console.log(addResult);
-    }).catch((addResult) => {
-        console.log(addResult);
+    }).catch((addError) => {
+        util.exit(addError);
     })
 });
 

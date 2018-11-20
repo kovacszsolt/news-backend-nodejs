@@ -1,5 +1,6 @@
 var requestpromise = require('request-promise');
 const cheerio = require('cheerio');
+const fs = require('fs');
 
 const exit = (__message) => {
     console.log('-------------------------');
@@ -39,15 +40,15 @@ const getHastagsFromText = (str) => {
  */
 const getUrlFromText = (str) => {
     const regex = /(?:(?:https?|ftp|file):\/\/|www\.|ftp\.)(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[-A-Z0-9+&@#\/%=~_|$?!:,.])*(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[A-Z0-9+&@#\/%=~_|$])/igm;
-    const _regex=regex.exec(str);
-    return (_regex===null) ? '' : _regex[0];
+    const _regex = regex.exec(str);
+    return (_regex === null) ? '' : _regex[0];
 }
 
 const getMetaFromURL = (url) => {
     return new Promise((resolve, reject) => {
         const _meta = {
             'title': '',
-            'url':'',
+            'url': '',
             'description': '',
             'image': ''
         }
@@ -69,9 +70,37 @@ const getMetaFromURL = (url) => {
     });
 }
 
+
+const downloadFromURL = (url, target) => {
+    console.log('url', url);
+    if (url.substring(0, 2) === '//') {
+        url = 'http:' + url;
+    }
+    return new Promise((resolve, reject) => {
+        const options = {
+            uri: url,
+            method: 'GET',
+            encoding: "binary"
+        };
+        requestpromise(options)
+            .then(function (body, data) {
+                let writeStream = fs.createWriteStream(target);
+                writeStream.write(body, 'binary');
+                writeStream.on('finish', () => {
+                    resolve(true);
+                });
+                writeStream.end();
+            })
+            .catch(function (err) {
+                reject(err);
+            });
+    });
+}
+
 module.exports = {
     exit,
     getHastagsFromText,
     getUrlFromText,
-    getMetaFromURL
+    getMetaFromURL,
+    downloadFromURL
 };

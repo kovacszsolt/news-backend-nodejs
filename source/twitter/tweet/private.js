@@ -3,7 +3,6 @@ const slug = require('slug');
 const routeFunction = require('../../route/private');
 
 const create = (__twitterId, __text, __title, __shortlink, __twitterDate, __twitter_category, __content, __id = '') => {
-    console.log(__title);
     if (__id === '') {
         return new dbModel.model({
             twitterId: __twitterId,
@@ -35,7 +34,7 @@ const create = (__twitterId, __text, __title, __shortlink, __twitterDate, __twit
 const list = () => {
     return dbModel.model.find({}, (error, result) => {
         return result;
-    }).populate('twitter_category twitter_content');
+    }).populate('twitter_category twitter_content twitter_image');
 }
 
 const add = (__twitterId, __text, __title, __shortlink, __twitterDate, __twitter_category, __content) => {
@@ -48,6 +47,24 @@ const add = (__twitterId, __text, __title, __shortlink, __twitterDate, __twitter
         } else {
             return 'error';
         }
+    });
+}
+
+const addImages = (__id, images) => {
+    dbModel.model.findById(__id, (error, result) => {
+        result.twitter_image = images;
+        dbModel.model.findByIdAndUpdate(__id, result, (updateErr, updateRes) => {
+            return updateRes;
+        });
+    });
+}
+
+const removeImages = (__id) => {
+    dbModel.model.find(__id, (error, result) => {
+        result.twitter_image = [];
+        dbModel.model.findByIdAndUpdate(__id, result, (updateErr, updateRes) => {
+            return updateRes;
+        });
     });
 }
 
@@ -78,7 +95,7 @@ const findCategory = (__categoryId) => {
 const find = (__args) => {
     return dbModel.model.find(__args, (error, result) => {
         return result;
-    });
+    }).populate('twitter_category twitter_content');
 }
 
 const purge = () => {
@@ -94,7 +111,9 @@ module.exports = {
     add,
     findTwitterId,
     findCategory,
+    addImages,
     find,
     purge,
+    removeImages,
     dbModel
 }
