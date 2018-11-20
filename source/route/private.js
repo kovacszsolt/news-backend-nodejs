@@ -23,8 +23,8 @@ const list = () => {
     return dbModel.model.find({}, (error, result) => {
         return result;
     }).populate({
-            path: 'twitter_category twitter_tweet', populate: {
-                path: 'twitter_category twitter_content'
+            path: 'twitter_category twitter_tweet twitter_image', populate: {
+                path: 'twitter_category twitter_content twitter_image'
             }
         }
     )
@@ -44,8 +44,8 @@ const findSlug = (__slug) => {
     return dbModel.model.find({slug: __slug}, (error, result) => {
         return result;
     }).populate({
-            path: 'twitter_category twitter_tweet', populate: {
-                path: 'twitter_category twitter_content'
+            path: 'twitter_category twitter_tweet twitter_image', populate: {
+                path: 'twitter_category twitter_content twitter_image'
             }
         }
     )

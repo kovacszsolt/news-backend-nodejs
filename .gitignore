@@ -3,3 +3,4 @@
 source/config.json
 source/node_modules/
 docker/.data
+source/_public/images

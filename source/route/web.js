@@ -6,6 +6,32 @@ const router = (app, upload) => {
         res.send({data: 'hello route teszt'});
     });
 
+    app.get('/route/get/image/:slug/:size.jpg', function (req, res) {
+        route.findSlug(req.params.slug).then((findSlugRequest) => {
+            if (findSlugRequest.status === 0) {
+                const tweet = findSlugRequest.result[0].twitter_tweet;
+                const images = tweet.twitter_image;
+                const size1 = images.find(function (element) {
+                    return element.size === req.params.size;
+                });
+                if (size1 === undefined) {
+                    res.sendFile('_public/dummy.png', {root: './'}, function (err) {
+                        console.log(err);
+                    });
+                } else {
+                    res.sendFile('_public/images/' + size1._id + '.jpg', {root: './'}, function (err) {
+                        res.sendFile('_public/dummy.png', {root: './'}, function (err) {
+                            console.log(err);
+                        });
+                    });
+                }
+            } else {
+                res.sendFile('_public/dummy.png', {root: './'}, function (err) {
+                    console.log(err);
+                });
+            }
+        });
+    });
     app.get('/route/get/:slug?', function (req, res) {
         route.findSlug(req.params.slug).then((findSlugRequest) => {
             if ((findSlugRequest.status === 0) && ((findSlugRequest.result[0].twitter_category !== null))) {
@@ -20,6 +46,8 @@ const router = (app, upload) => {
             }
         });
     });
+
+
 }
 module.exports = {
     router
