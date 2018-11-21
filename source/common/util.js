@@ -73,10 +73,15 @@ const getMetaFromURL = (url) => {
 
 const downloadFromURL = (url, target) => {
     console.log('url', url);
-    if (url.substring(0, 2) === '//') {
-        url = 'http:' + url;
+    if (url !== undefined) {
+        if (url.substring(0, 2) === '//') {
+            url = 'http:' + url;
+        }
     }
     return new Promise((resolve, reject) => {
+        if ((url.substring(0, 1) === '/') || (url === undefined)) {
+            resolve(false);
+        }
         const options = {
             uri: url,
             method: 'GET',
@@ -92,6 +97,7 @@ const downloadFromURL = (url, target) => {
                 writeStream.end();
             })
             .catch(function (err) {
+                console.log('requestpromise.catch', url);
                 reject(err);
             });
     });

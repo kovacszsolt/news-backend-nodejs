@@ -20,7 +20,7 @@ const client = new TwitterAPI({
     access_token_secret: config.twitter_access_token_secret
 });
 
-const params = {screen_name: config.twitter_screen_name}
+const params = {screen_name: config.twitter_screen_name, count: 199}
 
 
 /**
@@ -51,16 +51,19 @@ client.get('statuses/user_timeline', params, async function (error, tweets, resp
                         process.exit(0);
                     }
                 }).catch((storeTweetError) => {
+                    console.log('storeTweetError');
                     util.exit(storeTweetError);
                 });
             });
         }).catch((storeAllCategoryError) => {
+            console.log('storeAllCategoryError');
             util.exit(storeAllCategoryError);
         });
+    } else {
+        console.log(error);
     }
 });
 
-//614px
 const StoreTweet = (tweet, allCategory, postion) => {
     return new Promise((resolve, reject) => {
 
@@ -72,7 +75,6 @@ const StoreTweet = (tweet, allCategory, postion) => {
                     return categoryResult._id;
                 });
                 if (url !== '') {
-                    //  console.log('getMetaFromURL start');
                     util.getMetaFromURL(url).then((metaResult) => {
                         //   console.log('getMetaFromURL - end');
                         twittertContent.add(metaResult.title, metaResult.url, metaResult.description, metaResult.image).then((contentResult) => {
@@ -90,6 +92,7 @@ const StoreTweet = (tweet, allCategory, postion) => {
 
                         });
                     }).catch((metaError) => {
+                        console.log('metaError',url);
                         util.exit(metaError);
                         reject(metaError);
                     });

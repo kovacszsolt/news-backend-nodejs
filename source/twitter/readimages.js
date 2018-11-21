@@ -25,19 +25,32 @@ const resize = (file, size, tweet_id) => {
 fs.mkdirsSync(PUBLIC + '/original');
 _tweet.find({twitter_image: []}).then((tweetListResult) => {
         tweetListResult.map((tweet) => {
-            const imageurl = tweet.twitter_content.imageurl;
-            const fileOriginal = PUBLIC + '/original/' + tweet._id + '.jpg';
-            util.downloadFromURL(imageurl, fileOriginal).then((downloadFromURLResult) => {
-                Promise.all(
-                    __sizes.map(size => resize(fileOriginal, size, tweet._id))
-                ).then((result) => {
-                    _tweet.addImages(tweet._id, result);
-                    console.log(result)
-                }).catch((error) => {
-                    console.log(error);
-                    process.exit(-1);
-                })
-            });
+            console.log('___id', tweet._id);
+            if (tweet.twitter_content === undefined) {
+                console.log('tweet.twitter_content===undefined', tweet._id);
+                //   process.exit(0);
+            } else {
+                const imageurl = tweet.twitter_content.imageurl;
+                if (imageurl !== undefined) {
+                    const fileOriginal = PUBLIC + '/original/' + tweet._id + '.jpg';
+                    util.downloadFromURL(imageurl, fileOriginal).then((downloadFromURLResult) => {
+                        if (downloadFromURLResult) {
+                            Promise.all(
+                                __sizes.map(size => resize(fileOriginal, size, tweet._id))
+                            ).then((result) => {
+                                _tweet.addImages(tweet._id, result);
+                                console.log(result)
+                            }).catch((error) => {
+                                console.log('tweet._id', tweet._id);
+                                console.log(error);
+                              //  process.exit(-1);
+                            })
+                        }
+                    });
+                } else {
+                    console.log('imageurl === undefined', tweet._id);
+                }
+            }
         });
     }
 );
