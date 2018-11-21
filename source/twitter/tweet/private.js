@@ -50,6 +50,18 @@ const add = (__twitterId, __text, __title, __shortlink, __twitterDate, __twitter
     });
 }
 
+const findMulipleCategoryById = (__categoryIds) => {
+    return dbModel.model.find(
+        {
+            'twitter_category': {
+                $in: __categoryIds
+            }
+        }
+    ).populate('twitter_category twitter_content twitter_image').then((result) => {
+        return result;
+    });
+};
+
 const addImages = (__id, images) => {
     dbModel.model.findById(__id, (error, result) => {
         result.twitter_image = images;
@@ -115,5 +127,6 @@ module.exports = {
     find,
     purge,
     removeImages,
+    findMulipleCategoryById,
     dbModel
 }

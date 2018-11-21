@@ -35,6 +35,15 @@ const router = (app, upload) => {
         });
     });
 
+    app.get('/twitter/tweet/multiplecategory/:tags', function (req, res) {
+        const tags = req.params.tags.split(',');
+        tweet.findMultipleTweetsByCategoryIds(tags).then((findMulipleCategoryByIdResult) => {
+            res.send(findMulipleCategoryByIdResult);
+        }).catch((findMulipleCategoryByIdError) => {
+            res.send(findMulipleCategoryByIdError);
+        });
+    });
+
     app.get('/twitter/tweet/teszt/', function (req, res) {
         res.send({data: 'hello twitter tweet teszt'});
     });
