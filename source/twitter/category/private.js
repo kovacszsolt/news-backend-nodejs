@@ -31,6 +31,12 @@ const list = () => {
     });
 }
 
+const findSlug = (__slug) => {
+    return dbModel.model.find({slug: __slug}, (error, result) => {
+        return result;
+    });
+}
+
 const purge = () => {
     return dbModel.model.deleteMany({}, (err, records) => {
         return records;
@@ -127,6 +133,7 @@ module.exports = {
     find,
     add,
     purge,
+    findSlug,
     storeCategory,
     storeArrayCategory
 }
