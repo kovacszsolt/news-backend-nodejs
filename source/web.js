@@ -3,13 +3,15 @@
  * RUN THIS
  */
 
-const config=require('./common/config');
+const config = require('./common/config');
 const express = require('express');
 const bodyParser = require('body-parser');
 const request = require('request');
 const multer = require('multer');
 
 const routeRouter = require('./route/web');
+
+const routeSettings = require('./settings/web');
 
 const twitterTweetRouter = require('./twitter/tweet/web');
 
@@ -35,6 +37,8 @@ app.use(express.static(__dirname + '/_public'));
 routeRouter.router(app, upload);
 
 twitterTweetRouter.router(app, upload);
+
+routeSettings.router(app, upload);
 
 app.get('/', function (req, res) {
     res.send({data: 'hello world'});

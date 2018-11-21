@@ -11,6 +11,7 @@ const sleep = require('sleep');
 const sharp = require('sharp');
 const fs = require('fs');
 const slug = require('slug');
+const settings = require('../settings/settings');
 
 var lodash = require('lodash');
 const client = new TwitterAPI({
@@ -47,7 +48,8 @@ client.get('statuses/user_timeline', params, async function (error, tweets, resp
                 StoreTweet(tweet, storeAllCategoryResult, tweetCount).then((ok) => {
                     runCount--;
                     console.log('runCount', runCount);
-                    if (runCount === 1) {
+                    if (runCount === 2) {
+                        console.log(settings.updateTime());
                         process.exit(0);
                     }
                 }).catch((storeTweetError) => {
@@ -84,15 +86,9 @@ const StoreTweet = (tweet, allCategory, postion) => {
                                 util.exit(addError);
                                 reject(addError);
                             });
-
-                            /*
-
-                            */
-
-
                         });
                     }).catch((metaError) => {
-                        console.log('metaError',url);
+                        console.log('metaError', url);
                         util.exit(metaError);
                         reject(metaError);
                     });
