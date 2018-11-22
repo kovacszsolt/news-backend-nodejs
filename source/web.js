@@ -15,6 +15,12 @@ const routeSettings = require('./settings/web');
 
 const twitterTweetRouter = require('./twitter/tweet/web');
 
+const twitterCategoryRouter = require('./twitter/category/web');
+
+const twitterContentRouter = require('./twitter/content/web');
+
+const twitterImageRouter = require('./twitter/image/web');
+
 
 const app = express();
 
@@ -39,6 +45,12 @@ routeRouter.router(app, upload);
 twitterTweetRouter.router(app, upload);
 
 routeSettings.router(app, upload);
+
+twitterCategoryRouter.router(app, upload);
+
+twitterContentRouter.router(app, upload);
+
+twitterImageRouter.router(app, upload);
 
 app.get('/', function (req, res) {
     res.send({data: 'hello world'});

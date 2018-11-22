@@ -11,6 +11,12 @@ const router = (app, upload) => {
         })
     });
 
+    app.get('/twitter/tweet/list/simple', function (req, res) {
+        tweet.listSimple().then((records) => {
+            res.send(records);
+        })
+    });
+
     app.get('/twitter/tag/:slug?', function (req, res) {
         category.find({slug: req.params.slug}).then((categoryResult) => {
 

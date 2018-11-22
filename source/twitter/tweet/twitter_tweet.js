@@ -19,6 +19,14 @@ const list = () => {
     });
 }
 
+const listSimple = () => {
+    const _result = result();
+    return db.listSimple().then((listResult) => {
+        _result.result = listResult;
+        return _result;
+    });
+}
+
 const findMultipleTweetsByCategoryIds = (__categoryTags) => {
     const _result = result();
     return new Promise((resolve, reject) => {
@@ -45,5 +53,6 @@ const findMultipleTweetsByCategoryIds = (__categoryTags) => {
 module.exports = {
     resultError,
     findMultipleTweetsByCategoryIds,
-    list
+    list,
+    listSimple
 }

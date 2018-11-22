@@ -37,6 +37,12 @@ const list = () => {
     }).populate('twitter_category twitter_content twitter_image');
 }
 
+const listSimple = () => {
+    return dbModel.model.find({}, (error, result) => {
+        return result;
+    });
+}
+
 const add = (__twitterId, __text, __title, __shortlink, __twitterDate, __twitter_category, __content) => {
     return module.exports.findTwitterId(__twitterId).then((findResult) => {
         if (findResult.length === 0) {
@@ -124,6 +130,7 @@ module.exports = {
     findTwitterId,
     findCategory,
     addImages,
+    listSimple,
     find,
     purge,
     removeImages,
