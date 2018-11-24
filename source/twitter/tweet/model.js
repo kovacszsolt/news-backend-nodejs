@@ -27,14 +27,24 @@ const schema = new database.schema({
         type: String,
         require: true
     },
+    url: {
+        type: String,
+        require: false
+    },
+    content: {
+        type: String,
+        require: false
+    },
+    imageurl: {
+        type: String,
+        require: false
+    },
     twitter_category: [
         {type: database.db.Schema.Types.ObjectId, ref: 'twitter_category'}
     ],
-    twitter_content:
-        {type: database.db.Schema.Types.ObjectId, ref: 'twitter_content'},
     twitter_image: [
-    {type: database.db.Schema.Types.ObjectId, ref: 'twitter_image'}
-]
+        {type: database.db.Schema.Types.ObjectId, ref: 'twitter_image'}
+    ]
 }, {
     timestamps: true,
     versionKey: false

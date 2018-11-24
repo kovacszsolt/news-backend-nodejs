@@ -2,17 +2,18 @@ const dbModel = require('./model');
 const slug = require('slug');
 const routeFunction = require('../../route/private');
 
-const create = (__twitterId, __text, __title, __shortlink, __twitterDate, __twitter_category, __content, __id = '') => {
+const create = (__twitterId, __text, __title, __url, __twitterDate, __twitter_category, __content, __imageurl, __id = '') => {
     if (__id === '') {
         return new dbModel.model({
             twitterId: __twitterId,
             text: __text,
             title: __title,
             slug: slug(__title).toLowerCase(),
-            shortlink: __shortlink,
+            url: __url,
             twitterDate: __twitterDate,
             twitter_category: __twitter_category,
-            twitter_content: __content
+            content: __content,
+            imageurl: __imageurl
         });
     } else {
         return {
@@ -20,10 +21,11 @@ const create = (__twitterId, __text, __title, __shortlink, __twitterDate, __twit
             text: __text,
             title: __title,
             slug: slug(__title).toLowerCase(),
-            shortlink: __shortlink,
+            url: __url,
             twitterDate: __twitterDate,
             twitter_category: __twitter_category,
-            twitter_content: __content
+            content: __content,
+            imageurl: __imageurl
         };
     }
 };
@@ -34,7 +36,7 @@ const create = (__twitterId, __text, __title, __shortlink, __twitterDate, __twit
 const list = () => {
     return dbModel.model.find({}, (error, result) => {
         return result;
-    }).populate('twitter_category twitter_content twitter_image');
+    }).populate('twitter_category twitter_image');
 }
 
 const listSimple = () => {
@@ -43,10 +45,10 @@ const listSimple = () => {
     });
 }
 
-const add = (__twitterId, __text, __title, __shortlink, __twitterDate, __twitter_category, __content) => {
+const add = (__twitterId, __text, __title, __url, __twitterDate, __twitter_category, __content, __imageurl) => {
     return module.exports.findTwitterId(__twitterId).then((findResult) => {
         if (findResult.length === 0) {
-            const dbRecord = module.exports.create(__twitterId, __text, __title, __shortlink, __twitterDate, __twitter_category, __content);
+            const dbRecord = module.exports.create(__twitterId, __text, __title, __url, __twitterDate, __twitter_category, __content, __imageurl);
             dbModel.model.create(dbRecord);
             routeFunction.add(dbRecord.slug, dbRecord._id, null);
             return dbRecord;
@@ -63,7 +65,7 @@ const findMulipleCategoryById = (__categoryIds) => {
                 $in: __categoryIds
             }
         }
-    ).populate('twitter_category twitter_content twitter_image').then((result) => {
+    ).populate('twitter_category twitter_image').then((result) => {
         return result;
     });
 };
@@ -93,7 +95,7 @@ const findID = (__id) => {
         } else {
             return 0;
         }
-    }).populate('twitter_category').populate('twitter_content');
+    }).populate('twitter_category');
 }
 
 const findTwitterId = (__twitterId) => {
@@ -106,14 +108,14 @@ const findCategory = (__categoryId) => {
     return dbModel.model.find({twitter_category: __categoryId}, (error, result) => {
         return result;
     }).populate({
-        path: 'twitter_tweet twitter_category twitter_content'
+        path: 'twitter_tweet twitter_category'
     })
 }
 
 const find = (__args) => {
     return dbModel.model.find(__args, (error, result) => {
         return result;
-    }).populate('twitter_category twitter_content');
+    }).populate('twitter_category');
 }
 
 const purge = () => {
