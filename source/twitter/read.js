@@ -17,7 +17,7 @@ const client = new TwitterAPI({
     access_token_secret: config.twitter_access_token_secret
 });
 
-const params = {screen_name: config.twitter_screen_name, count: 3}
+const params = {screen_name: config.twitter_screen_name, count: 200}
 
 const __sizes = [
     {title: 'size1', width: 614},
@@ -33,8 +33,8 @@ const PUBLIC = './_public/images';
 client.get('statuses/user_timeline', params, async function (error, tweets, response) {
 
     if (!error) {
-        let tweetCount = tweets.length;
-
+        tweets = tweets.filter(q => q.retweet_count === 0);
+        console.log('tweetsCount', tweets.length);
         categoryFunctions.storeArrayCategory(categoryNames(tweets)).then((storeArrayCategoryResult) => {
             Promise.all(tweets.map((tweetsResult) => {
                 return getTweet(tweetsResult);
@@ -44,6 +44,15 @@ client.get('statuses/user_timeline', params, async function (error, tweets, resp
                         return getTweetMeta(mapResult);
                     })
                 ).then((tweetData) => {
+                    if (tweetData.error) {
+                        console.log('!+++++++++++++++++++++++');
+                        console.log(tweetData);
+                        process.exit(-1);
+                    }
+                    console.log('tweetDataLength', tweetData.length);
+                    if (tweetData.length === 0) {
+                        process.exit(0);
+                    }
                     Promise.all(
                         tweetData.map((tweet) => {
                             return storeTweet(tweet);
@@ -52,26 +61,42 @@ client.get('statuses/user_timeline', params, async function (error, tweets, resp
                         tweetObjects.forEach((tweetObject) => {
                             saveImages(tweetObject);
                         });
+                    }).catch((tweetDataError) => {
+                        console.log(tweetDataError);
+                        process.exit(-1);
                     });
+                }).catch((getNewTweetError) => {
+                    console.log('getNewTweetError', getNewTweetError);
+                    process.exit(-1);
                 });
 
+            }).catch((tweetsResultError) => {
+                console.log('tweetsResultError', tweetsResultError);
+                process.exit(-1);
             });
+        }).catch((storeArrayCategoryError) => {
+            console.log(storeArrayCategoryError);
+            process.exit(-1);
         });
     }
 });
 
 
 const saveImages = (tweetObject) => {
-    __sizes.forEach((size) => {
-        const image_record = imageFunctions.add(tweetObject._id, tweetObject.title, size.title);
-        console.log('image_record', image_record);
-        console.log(tweetObject.imageurl);
-        utilImageFunctions.resize(tweetObject.imageurl, PUBLIC + '/' + image_record._id + '.jpg', size.width).then((tmp) => {
-            console.log('tmp', tmp);
-        }).catch((ccc) => {
-            console.log('cath', ccc);
+    const original_file = PUBLIC + '/original/' + tweetObject._id + '.jpg';
+    return utilFunctions.downloadFromURL(tweetObject.imageurl, original_file).then((downloadFromURLResult) => {
+        __sizes.forEach((size) => {
+            const image_record = imageFunctions.add(tweetObject._id, tweetObject.title, size.title);
+            utilImageFunctions.resize(original_file, PUBLIC + '/' + image_record._id + '.jpg', size.width).then((resizeResopnse) => {
+                console.log('resize', original_file, size.title);
+            }).catch((resizeError) => {
+                console.log(resizeError);
+            });
         });
-
+    }).catch((downloadFromURLError) => {
+        console.log('downloadFromURL.error');
+        console.log(tweetObject.imageurl);
+        console.log('-------------------');
     });
 }
 
@@ -111,7 +136,14 @@ const getNewTweet = (tweets) => {
 
 const getTweetMeta = (tweet) => {
     return utilFunctions.getMetaFromURL(utilFunctions.getUrlFromText(tweet.origonal.text)).then((meta) => {
-        return {tweet: tweet['origonal'], meta: meta};
+        return {
+            tweet: tweet['origonal'], meta: meta
+        };
+    }).catch((error) => {
+        console.log((tweet));
+        console.log('------------------------------------------------');
+        console.log(error);
+        process.exit(-1);
     });
 }
 
