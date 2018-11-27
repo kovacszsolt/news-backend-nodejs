@@ -1,5 +1,5 @@
 const lodash = require('lodash');
-
+const fs = require('fs-extra');
 const config = require('../common/config');
 const TwitterAPI = require('twitter');
 
@@ -17,7 +17,7 @@ const client = new TwitterAPI({
     access_token_secret: config.twitter_access_token_secret
 });
 
-const params = {screen_name: config.twitter_screen_name, count: 200}
+const params = {screen_name: config.twitter_screen_name, count: 199}
 
 const __sizes = [
     {title: 'size1', width: 614},
@@ -25,6 +25,7 @@ const __sizes = [
 ];
 
 const PUBLIC = './_public/images';
+fs.ensureDirSync(PUBLIC + '/original');
 
 /**
  * START TWITTER READING
@@ -58,8 +59,16 @@ client.get('statuses/user_timeline', params, async function (error, tweets, resp
                             return storeTweet(tweet);
                         })
                     ).then((tweetObjects) => {
+                        let tweetCount = tweetObjects.length;
                         tweetObjects.forEach((tweetObject) => {
-                            saveImages(tweetObject);
+                            saveImages(tweetObject).then((imageIds) => {
+                                tweetCount--;
+                                tweetFunctions.addImages(tweetObject._id, imageIds);
+                                console.log(tweetCount);
+                                if (tweetCount === 1) {
+                                    process.exit(0);
+                                }
+                            });
                         });
                     }).catch((tweetDataError) => {
                         console.log(tweetDataError);
@@ -85,14 +94,16 @@ client.get('statuses/user_timeline', params, async function (error, tweets, resp
 const saveImages = (tweetObject) => {
     const original_file = PUBLIC + '/original/' + tweetObject._id + '.jpg';
     return utilFunctions.downloadFromURL(tweetObject.imageurl, original_file).then((downloadFromURLResult) => {
+        const fileIds = [];
         __sizes.forEach((size) => {
             const image_record = imageFunctions.add(tweetObject._id, tweetObject.title, size.title);
+            fileIds.push(image_record._id);
             utilImageFunctions.resize(original_file, PUBLIC + '/' + image_record._id + '.jpg', size.width).then((resizeResopnse) => {
-                console.log('resize', original_file, size.title);
             }).catch((resizeError) => {
                 console.log(resizeError);
             });
         });
+        return fileIds;
     }).catch((downloadFromURLError) => {
         console.log('downloadFromURL.error');
         console.log(tweetObject.imageurl);
