@@ -7,7 +7,7 @@ const router = (app, upload) => {
 
     app.get('/twitter/tweet/list/', function (req, res) {
         tweet.list().then((records) => {
-            res.send(records);
+            res.json(records);
         })
     });
 

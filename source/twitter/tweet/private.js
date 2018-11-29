@@ -36,7 +36,8 @@ const create = (__twitterId, __text, __title, __url, __twitterDate, __twitter_ca
 const list = () => {
     return dbModel.model.find({}, (error, result) => {
         return result;
-    }).populate('twitter_category twitter_image');
+    });
+   // }).populate('twitter_category twitter_image');
 }
 
 const listSimple = () => {
