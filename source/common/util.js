@@ -47,6 +47,7 @@ const getUrlFromText = (str) => {
 const getMetaFromURL = (url) => {
     return new Promise((resolve, reject) => {
         const _meta = {
+            'error': true,
             'title': '',
             'url': '',
             'description': '',
@@ -58,6 +59,7 @@ const getMetaFromURL = (url) => {
         requestpromise(options)
             .then(function (response) {
                 const _cheerio = cheerio.load(response);
+                _meta.error = false;
                 _meta.title = _cheerio('meta[property="og:title"]').attr('content');
                 _meta.url = _cheerio('meta[property="og:url"]').attr('content');
                 _meta.description = _cheerio('meta[property="og:description"]').attr('content');
@@ -65,14 +67,19 @@ const getMetaFromURL = (url) => {
                 resolve(_meta);
             })
             .catch(function (err) {
+                resolve(_meta)
+                /*
+                console.log(options);
+                console.log('getMetaFromURL', err);
+                process.exit(-2);
                 reject(err);
+*/
             });
     });
 }
 
 
 const downloadFromURL = (url, target) => {
-    console.log('url', url);
     if (url !== undefined) {
         if (url.substring(0, 2) === '//') {
             url = 'http:' + url;
