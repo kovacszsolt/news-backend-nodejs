@@ -1,7 +1,5 @@
 const database = require('../../common/database');
 const twitter_category = require('../category/model');
-const twitter_content = require('../content/model');
-const twitter_image = require('../image/model');
 const schema = new database.schema({
     twitterId: {
         type: String,
@@ -39,11 +37,12 @@ const schema = new database.schema({
         type: String,
         require: false
     },
+    imageextension: {
+        type: String,
+        require: false
+    },
     twitter_category: [
         {type: database.db.Schema.Types.ObjectId, ref: 'twitter_category'}
-    ],
-    twitter_image: [
-        {type: database.db.Schema.Types.ObjectId, ref: 'twitter_image'}
     ]
 }, {
     timestamps: true,

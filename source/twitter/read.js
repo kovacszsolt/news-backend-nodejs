@@ -17,15 +17,12 @@ const client = new TwitterAPI({
     access_token_secret: config.twitter_access_token_secret
 });
 
-const params = {screen_name: config.twitter_screen_name, count: 199}
+const params = {screen_name: config.twitter_screen_name, count: 3}
 
 const __sizes = [
     {title: 'size1', width: 614},
     {title: 'size2', width: 760}
 ];
-
-const PUBLIC = './_public/images';
-fs.ensureDirSync(PUBLIC + '/original');
 
 /**
  * START TWITTER READING
@@ -63,9 +60,8 @@ client.get('statuses/user_timeline', params, async function (error, tweets, resp
                         tweetObjects.forEach((tweetObject) => {
                             saveImages(tweetObject).then((imageIds) => {
                                 tweetCount--;
-                                tweetFunctions.addImages(tweetObject._id, imageIds);
                                 console.log(tweetCount);
-                                if (tweetCount === 1) {
+                                if (tweetCount === 0) {
                                     process.exit(0);
                                 }
                             });
@@ -92,6 +88,24 @@ client.get('statuses/user_timeline', params, async function (error, tweets, resp
 
 
 const saveImages = (tweetObject) => {
+    const original_file = config.image_store + '/original/' + tweetObject._id + '.' + tweetObject.imageextension;
+    return utilFunctions.downloadFromURL(tweetObject.imageurl, original_file).then((downloadFromURLResult) => {
+        const fileIds = [];
+        __sizes.forEach((size) => {
+            utilImageFunctions.resize(original_file, config.image_store + '/' + size.title + '/' + tweetObject._id + '.' + tweetObject.imageextension, size.width).then((resizeResopnse) => {
+            }).catch((resizeError) => {
+                console.log(resizeError);
+                console.log('-------------------');
+                console.log(tweetObject);
+                process.exit(-1);
+            });
+        });
+    }).catch((downloadFromURLError) => {
+        console.log('downloadFromURL.error');
+        console.log(tweetObject.imageurl);
+        console.log('-------------------');
+    });
+    /*
     const original_file = PUBLIC + '/original/' + tweetObject._id + '.jpg';
     return utilFunctions.downloadFromURL(tweetObject.imageurl, original_file).then((downloadFromURLResult) => {
         const fileIds = [];
@@ -109,6 +123,7 @@ const saveImages = (tweetObject) => {
         console.log(tweetObject.imageurl);
         console.log('-------------------');
     });
+    */
 }
 
 const storeTweet = (tweet) => {

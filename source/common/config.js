@@ -8,6 +8,7 @@ const config = () => {
     } else {
         const _config = require(ROOT + 'config.example.json');
         _config.port = getParam('PORT');
+        _config.image_store = getParam('IMAGE_STORE');
         _config.mongo_server = getParam('MONGOSERVER');
         _config.allow_origin = getParam('ALLOWORIGIN');
         _config.twitter_consumer_key = getParam('TWITTERCONSUMERKEY');

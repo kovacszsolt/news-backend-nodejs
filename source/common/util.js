@@ -1,7 +1,7 @@
 var requestpromise = require('request-promise');
 const cheerio = require('cheerio');
 const fs = require('fs');
-
+const fsextra = require('fs-extra');
 const exit = (__message) => {
     console.log('-------------------------');
     console.log('-------------------------');
@@ -42,6 +42,15 @@ const getUrlFromText = (str) => {
     const regex = /(?:(?:https?|ftp|file):\/\/|www\.|ftp\.)(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[-A-Z0-9+&@#\/%=~_|$?!:,.])*(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[A-Z0-9+&@#\/%=~_|$])/igm;
     const _regex = regex.exec(str);
     return (_regex === null) ? '' : _regex[0];
+}
+
+/**
+ * get extension from file name
+ * @param file
+ * @returns {string[]}
+ */
+const getFileExtension = (file) => {
+    return file.split('.').slice(file.split('.').length - 1).toString();
 }
 
 const getMetaFromURL = (url) => {
@@ -94,6 +103,8 @@ const downloadFromURL = (url, target) => {
             method: 'GET',
             encoding: "binary"
         };
+        const targetArray = target.split('/');
+        fsextra.ensureDirSync(targetArray.slice(0, targetArray.length - 1).join('/'));
         requestpromise(options)
             .then(function (body, data) {
                 let writeStream = fs.createWriteStream(target);
@@ -115,5 +126,6 @@ module.exports = {
     getHastagsFromText,
     getUrlFromText,
     getMetaFromURL,
-    downloadFromURL
+    downloadFromURL,
+    getFileExtension
 };
