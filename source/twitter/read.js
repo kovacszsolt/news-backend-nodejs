@@ -17,7 +17,7 @@ const client = new TwitterAPI({
     access_token_secret: config.twitter_access_token_secret
 });
 
-const params = {screen_name: config.twitter_screen_name, count: 3}
+const params = {screen_name: config.twitter_screen_name, count: 199}
 
 const __sizes = [
     {title: 'size1', width: 614},
@@ -27,11 +27,13 @@ const __sizes = [
 /**
  * START TWITTER READING
  */
-
+console.log(config.twitter_excepotion[0]);
+console.log(config.twitter_excepotion);
 client.get('statuses/user_timeline', params, async function (error, tweets, response) {
 
     if (!error) {
         tweets = tweets.filter(q => q.retweet_count === 0);
+        tweets = tweets.filter(q => !config.twitter_excepotion.includes(q.id.toString()));
         console.log('tweetsCount', tweets.length);
         categoryFunctions.storeArrayCategory(categoryNames(tweets)).then((storeArrayCategoryResult) => {
             Promise.all(tweets.map((tweetsResult) => {
@@ -102,7 +104,8 @@ const saveImages = (tweetObject) => {
         });
     }).catch((downloadFromURLError) => {
         console.log('downloadFromURL.error');
-        console.log(tweetObject.imageurl);
+        console.log(tweetObject);
+        //console.log(tweetObject.imageurl);
         console.log('-------------------');
     });
     /*

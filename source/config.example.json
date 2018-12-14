@@ -6,5 +6,6 @@
   "twitter_consumer_secret": "Twitter API Consumer Secret",
   "twitter_access_token_key": "Twitter API Access Token Key",
   "twitter_access_token_secret": "Twitter API Access Token Secret",
-  "twitter_screen_name": "Twitter Display Name"
+  "twitter_screen_name": "Twitter Display Name",
+  "twitter_excepotion": []
 }
