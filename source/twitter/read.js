@@ -8,7 +8,6 @@ const utilImageFunctions = require('../common/image');
 
 const categoryFunctions = require('./category/private');
 const tweetFunctions = require('./tweet/private');
-const imageFunctions = require('./image/private');
 
 const client = new TwitterAPI({
     consumer_key: config.twitter_consumer_key,
@@ -88,7 +87,6 @@ client.get('statuses/user_timeline', params, async function (error, tweets, resp
     }
 });
 
-
 const saveImages = (tweetObject) => {
     const original_file = config.image_store + '/original/' + tweetObject._id + '.' + tweetObject.imageextension;
     return utilFunctions.downloadFromURL(tweetObject.imageurl, original_file).then((downloadFromURLResult) => {
@@ -108,25 +106,6 @@ const saveImages = (tweetObject) => {
         //console.log(tweetObject.imageurl);
         console.log('-------------------');
     });
-    /*
-    const original_file = PUBLIC + '/original/' + tweetObject._id + '.jpg';
-    return utilFunctions.downloadFromURL(tweetObject.imageurl, original_file).then((downloadFromURLResult) => {
-        const fileIds = [];
-        __sizes.forEach((size) => {
-            const image_record = imageFunctions.add(tweetObject._id, tweetObject.title, size.title);
-            fileIds.push(image_record._id);
-            utilImageFunctions.resize(original_file, PUBLIC + '/' + image_record._id + '.jpg', size.width).then((resizeResopnse) => {
-            }).catch((resizeError) => {
-                console.log(resizeError);
-            });
-        });
-        return fileIds;
-    }).catch((downloadFromURLError) => {
-        console.log('downloadFromURL.error');
-        console.log(tweetObject.imageurl);
-        console.log('-------------------');
-    });
-    */
 }
 
 const storeTweet = (tweet) => {

@@ -3,9 +3,6 @@
  */
 const dbModel = require('./model');
 
-const routeFunction = require('../route/private');
-
-
 const create = (__key, __value, __id = '') => {
     if (__id === '') {
         return new dbModel.model({

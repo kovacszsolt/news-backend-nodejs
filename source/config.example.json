@@ -1,6 +1,8 @@
 {
   "port": "8090",
   "mongo_server": "mongodb://host:port/database",
+  "image_store": "Image files path",
+  "default_image": "Image path when not use the image",
   "allow_origin": "Allow Origin for Web Service",
   "twitter_consumer_key": "Twitter API Consumer Key",
   "twitter_consumer_secret": "Twitter API Consumer Secret",

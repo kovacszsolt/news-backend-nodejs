@@ -1,21 +1,36 @@
 /**
- * Web End Point for Twitter Category
+ * Web End Point for Images
  */
-
-const twitter_image = require('./twitter_image');
+const config = require('../../common/config');
+const tweetFunction = require('../tweet/private');
+const fs = require('fs-extra');
 const router = (app, upload) => {
 
-    app.get('/twitter/image/list/', function (req, res) {
-        twitter_image.list().then((records) => {
-            res.send(records);
-        })
+    app.get('/image/test/', function (req, res) {
+        res.send('hello');
+    });
+    app.get('/image/:size/:tweetslug.:extension', function (req, res) {
+        const size = req.params.size;
+        const tweetslug = req.params.tweetslug;
+        const extension = req.params.extension;
+        tweetFunction.findTwitterSlug(tweetslug).then((findTwitterSlugResponse) => {
+            if (findTwitterSlugResponse.length === 1) {
+                const fileName = config.image_store + '/' + size + '/' + findTwitterSlugResponse[0]._id + '.' + extension;
+                if (fs.existsSync(fileName)) {
+                    res.sendFile(fileName, {root: './'}, function (err) {
+                    });
+                } else {
+                    res.sendFile(config.default_image, {root: './'}, function (err) {
+                    });
+                }
+            } else {
+                res.sendFile(config.default_image, {root: './'}, function (err) {
+                });
+            }
+        });
+
     });
 
-    app.get('/twitter/image/list/simple/', function (req, res) {
-        twitter_image.list().then((records) => {
-            res.send(records);
-        })
-    });
 
 }
 module.exports = {

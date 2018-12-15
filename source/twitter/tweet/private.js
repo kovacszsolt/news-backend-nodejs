@@ -1,6 +1,5 @@
 const dbModel = require('./model');
 const slug = require('slug');
-const routeFunction = require('../../route/private');
 const utilFunciton = require('../../common/util');
 
 const create = (__twitterId, __text, __title, __url, __twitterDate, __twitter_category, __content, __imageurl, __id = '') => {
@@ -54,7 +53,6 @@ const add = (__twitterId, __text, __title, __url, __twitterDate, __twitter_categ
         if (findResult.length === 0) {
             const dbRecord = module.exports.create(__twitterId, __text, __title, __url, __twitterDate, __twitter_category, __content, __imageurl);
             dbModel.model.create(dbRecord);
-            routeFunction.add(dbRecord.slug, dbRecord._id, null);
             return dbRecord;
         } else {
             return 'error';
@@ -90,11 +88,17 @@ const findTwitterId = (__twitterId) => {
     });
 }
 
+const findTwitterSlug = (__twitterSlug) => {
+    return dbModel.model.find({slug: __twitterSlug}, (error, result) => {
+        return result;
+    });
+}
+
 const findCategory = (__categoryId) => {
     return dbModel.model.find({twitter_category: __categoryId}, (error, result) => {
         return result;
     }).populate({
-        path: 'twitter_tweet twitter_category'
+        path: 'twitter_category'
     })
 }
 
@@ -116,6 +120,7 @@ module.exports = {
     findID,
     add,
     findTwitterId,
+    findTwitterSlug,
     findCategory,
     listSimple,
     find,
