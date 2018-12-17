@@ -16,7 +16,7 @@ const config = () => {
         _config.twitter_access_token_key = getParam('TWITTERACCESSTOKENKEY');
         _config.twitter_access_token_secret = getParam('TWITTERACCESSTOKENSECRET');
         _config.twitter_screen_name = getParam('TWITTERSCREENNAME');
-        _config.twitter_excepotion = JSON.parse(getParam('TWITTERSCREENNAME'));
+        _config.twitter_excepotion = JSON.parse(getParam('TWITTEREXCEPTION'));
         Object.keys(_config).map((_configName) => {
             if (_config[_configName] === '') {
                 util.exit('Config ERROR');

@@ -1,4 +1,3 @@
-const sharp = require('sharp');
 const fsextra = require('fs-extra');
 const util = require('./util');
 const gm = require('gm').subClass({imageMagick: true});
