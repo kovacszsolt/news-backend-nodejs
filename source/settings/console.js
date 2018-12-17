@@ -8,12 +8,7 @@ const util = require('util');
 yargs.options.titleOptions.demand = true;
 
 yargs.console.command('updatetime', 'List Update time', {}, (argv) => {
-    console.log(settings.updateTime());
-    /*
-    settings.updateTime().then((listResult) => {
-        console.log(util.inspect(listResult, {showHidden: false, depth: null}))
-    })
-    */
+    settings.updateTime();
 });
 
 yargs.console.command('list', 'List all Settings', {}, (argv) => {

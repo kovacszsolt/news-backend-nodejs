@@ -9,6 +9,8 @@ const utilImageFunctions = require('../common/image');
 const categoryFunctions = require('./category/private');
 const tweetFunctions = require('./tweet/private');
 
+const settingsFunctions = require('../settings/settings');
+
 const client = new TwitterAPI({
     consumer_key: config.twitter_consumer_key,
     consumer_secret: config.twitter_consumer_secret,
@@ -63,6 +65,7 @@ client.get('statuses/user_timeline', params, async function (error, tweets, resp
                                 tweetCount--;
                                 console.log(tweetCount);
                                 if (tweetCount === 0) {
+                                    console.log('settings must be RUN');
                                     process.exit(0);
                                 }
                             });
