@@ -16,47 +16,9 @@ const resize = (sourceFile, destionationFile, width) => {
                     reject(err);
                 }
             });
-        /*
-        sharp(sourceFile)
-            .rotate()
-            .resize(width)
-            .toFile(destionationFile, (err, info) => {
-                if (err !== null) {
-                    reject(err);
-                } else {
-                    resolve(info);
-                }
-            });
-            */
-
     });
 }
 
-
-/*
-const resize = (sourceFile, destionationFile, width) => {
-    const targetArray = destionationFile.split('/');
-    fsextra.ensureDirSync(targetArray.slice(0, targetArray.length - 1).join('/'));
-    return new Promise((resolve, reject) => {
-        console.log(util.getFileExtension(destionationFile));
-        if (util.getFileExtension(destionationFile) === 'jpg') {
-            sharp(sourceFile)
-                .rotate()
-                .resize(width)
-                .toFile(destionationFile, (err, info) => {
-                    if (err !== null) {
-                        reject(err);
-                    } else {
-                        resolve(info);
-                    }
-                });
-        } else {
-            fsextra.copySync(sourceFile, destionationFile);
-            resolve(true);
-        }
-    });
-}
-*/
 
 module.exports = {
     resize
