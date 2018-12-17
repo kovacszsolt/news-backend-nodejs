@@ -1,6 +1,6 @@
 const dbModel = require('./model');
 const slug = require('slug');
-const routeFunction = require('../../route/private');
+const utilFunciton = require('../../common/util');
 
 const create = (__twitterId, __text, __title, __url, __twitterDate, __twitter_category, __content, __imageurl, __id = '') => {
     if (__id === '') {
@@ -13,7 +13,8 @@ const create = (__twitterId, __text, __title, __url, __twitterDate, __twitter_ca
             twitterDate: __twitterDate,
             twitter_category: __twitter_category,
             content: __content,
-            imageurl: __imageurl
+            imageurl: __imageurl,
+            imageextension: utilFunciton.getFileExtension(__imageurl)
         });
     } else {
         return {
@@ -25,7 +26,8 @@ const create = (__twitterId, __text, __title, __url, __twitterDate, __twitter_ca
             twitterDate: __twitterDate,
             twitter_category: __twitter_category,
             content: __content,
-            imageurl: __imageurl
+            imageurl: __imageurl,
+            imageextension: utilFunciton.getFileExtension(__imageurl)
         };
     }
 };
@@ -37,7 +39,7 @@ const list = () => {
     return dbModel.model.find({}, (error, result) => {
         return result;
     });
-   // }).populate('twitter_category twitter_image');
+    // }).populate('twitter_category twitter_image');
 }
 
 const listSimple = () => {
@@ -51,7 +53,6 @@ const add = (__twitterId, __text, __title, __url, __twitterDate, __twitter_categ
         if (findResult.length === 0) {
             const dbRecord = module.exports.create(__twitterId, __text, __title, __url, __twitterDate, __twitter_category, __content, __imageurl);
             dbModel.model.create(dbRecord);
-            routeFunction.add(dbRecord.slug, dbRecord._id, null);
             return dbRecord;
         } else {
             return 'error';
@@ -66,28 +67,10 @@ const findMulipleCategoryById = (__categoryIds) => {
                 $in: __categoryIds
             }
         }
-    ).populate('twitter_category twitter_image').then((result) => {
+    ).populate('twitter_category').then((result) => {
         return result;
     });
 };
-
-const addImages = (__id, images) => {
-    dbModel.model.findById(__id, (error, result) => {
-        result.twitter_image = images;
-        dbModel.model.findByIdAndUpdate(__id, result, (updateErr, updateRes) => {
-            return updateRes;
-        });
-    });
-}
-
-const removeImages = (__id) => {
-    dbModel.model.find(__id, (error, result) => {
-        result.twitter_image = [];
-        dbModel.model.findByIdAndUpdate(__id, result, (updateErr, updateRes) => {
-            return updateRes;
-        });
-    });
-}
 
 const findID = (__id) => {
     return dbModel.model.findById(__id, (error, result) => {
@@ -105,11 +88,17 @@ const findTwitterId = (__twitterId) => {
     });
 }
 
+const findTwitterSlug = (__twitterSlug) => {
+    return dbModel.model.find({slug: __twitterSlug}, (error, result) => {
+        return result;
+    });
+}
+
 const findCategory = (__categoryId) => {
     return dbModel.model.find({twitter_category: __categoryId}, (error, result) => {
         return result;
     }).populate({
-        path: 'twitter_tweet twitter_category'
+        path: 'twitter_category'
     })
 }
 
@@ -131,12 +120,11 @@ module.exports = {
     findID,
     add,
     findTwitterId,
+    findTwitterSlug,
     findCategory,
-    addImages,
     listSimple,
     find,
     purge,
-    removeImages,
     findMulipleCategoryById,
     dbModel
 }

@@ -1,7 +1,7 @@
 var requestpromise = require('request-promise');
 const cheerio = require('cheerio');
 const fs = require('fs');
-
+const fsextra = require('fs-extra');
 const exit = (__message) => {
     console.log('-------------------------');
     console.log('-------------------------');
@@ -44,6 +44,20 @@ const getUrlFromText = (str) => {
     return (_regex === null) ? '' : _regex[0];
 }
 
+/**
+ * get extension from file name
+ * @param file
+ * @returns {string[]}
+ */
+const getFileExtension = (file) => {
+    let _return = file;
+    _return = file.split('.').slice(file.split('.').length - 1).toString();
+    if (_return.indexOf('?') !== -1) {
+        _return = _return.substring(0, _return.indexOf('?'));
+    }
+    return _return;
+}
+
 const getMetaFromURL = (url) => {
     return new Promise((resolve, reject) => {
         const _meta = {
@@ -64,9 +78,17 @@ const getMetaFromURL = (url) => {
                 _meta.url = _cheerio('meta[property="og:url"]').attr('content');
                 _meta.description = _cheerio('meta[property="og:description"]').attr('content');
                 _meta.image = _cheerio('meta[property="og:image"]').attr('content');
+                if (_meta.image.substring(0, 4) !== 'http') {
+                    if (_meta.image.substring(0, 2) === '//') {
+                        _meta.image = 'http://' + _meta.image.substr(2);
+                    } else {
+                        _meta.image = _meta.url.split('/').slice(0, 3).join('/') + _meta.image;
+                    }
+                }
                 resolve(_meta);
             })
             .catch(function (err) {
+                console.log('getMetaFromURL.err', err);
                 resolve(_meta)
                 /*
                 console.log(options);
@@ -94,6 +116,8 @@ const downloadFromURL = (url, target) => {
             method: 'GET',
             encoding: "binary"
         };
+        const targetArray = target.split('/');
+        fsextra.ensureDirSync(targetArray.slice(0, targetArray.length - 1).join('/'));
         requestpromise(options)
             .then(function (body, data) {
                 let writeStream = fs.createWriteStream(target);
@@ -104,6 +128,7 @@ const downloadFromURL = (url, target) => {
                 writeStream.end();
             })
             .catch(function (err) {
+                console.log('err', err);
                 console.log('requestpromise.catch', url);
                 reject(err);
             });
@@ -115,5 +140,6 @@ module.exports = {
     getHastagsFromText,
     getUrlFromText,
     getMetaFromURL,
-    downloadFromURL
+    downloadFromURL,
+    getFileExtension
 };

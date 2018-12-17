@@ -3,8 +3,6 @@
  */
 const dbModel = require('./model');
 
-const routeFunction = require('../../route/private');
-
 const slug = require('slug');
 
 const create = (__title, __id = '') => {
@@ -70,7 +68,6 @@ const add = (__title) => {
         if (findResult.length === 0) {
             const dbRecord = module.exports.create(__title);
             dbModel.model.create(dbRecord);
-            routeFunction.add(dbRecord.slug, null, dbRecord._id);
             return dbRecord;
         } else {
             return 'error';

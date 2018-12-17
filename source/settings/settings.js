@@ -29,15 +29,15 @@ const findUPDATEKEY = () => {
 
 const updateTime = () => {
     const newKey = randomstring.generate();
-    db.findKey('UPDATEKEY').then((record) => {
+    return db.findKey('UPDATEKEY').then((record) => {
         if (record.length === 0) {
             db.add('UPDATEKEY', newKey);
         } else {
             db.update('UPDATEKEY', newKey);
         }
-
+        return newKey;
     });
-    return newKey;
+
 }
 
 module.exports = {

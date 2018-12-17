@@ -16,7 +16,7 @@ yargs.console.command('findcategoryid', 'List Category by id TWITTER', {
         process.exit(0);
     }).catch((findCategoryError) => {
         util.exit(findCategoryError);
-    });
+    })
 });
 
 yargs.console.command('findcategory', 'List Category TWITTER', {
