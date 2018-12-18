@@ -131,6 +131,7 @@ const downloadFromURL = (url, target) => {
                 console.log('err', err);
                 console.log('requestpromise.catch', url);
                 reject(err);
+
             });
     });
 }

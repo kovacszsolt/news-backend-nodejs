@@ -15,9 +15,11 @@ const router = (app, upload) => {
         const extension = req.params.extension;
         tweetFunction.findTwitterSlug(tweetslug).then((findTwitterSlugResponse) => {
             if (findTwitterSlugResponse.length === 1) {
-                const fileName = config.image_store + '/' + size + '/' + findTwitterSlugResponse[0]._id + '.' + extension;
+                const fileName = config.root_path + config.image_store + '/' + size + '/' + findTwitterSlugResponse[0]._id + '.' + extension;
                 if (fs.existsSync(fileName)) {
-                    res.sendFile(fileName, {root: './'}, function (err) {
+                    const requestFileName = config.image_store + '/' + size + '/' + findTwitterSlugResponse[0]._id + '.' + extension;
+                    res.sendFile(requestFileName, {root: './'}, function (err) {
+                        console.log(fileName, err);
                     });
                 } else {
                     res.sendFile(config.default_image, {root: './'}, function (err) {
@@ -25,6 +27,7 @@ const router = (app, upload) => {
                 }
             } else {
                 res.sendFile(config.default_image, {root: './'}, function (err) {
+                    console.log(err);
                 });
             }
         });

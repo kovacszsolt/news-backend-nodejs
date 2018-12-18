@@ -91,11 +91,11 @@ client.get('statuses/user_timeline', params, async function (error, tweets, resp
 });
 
 const saveImages = (tweetObject) => {
-    const original_file = config.image_store + '/original/' + tweetObject._id + '.' + tweetObject.imageextension;
+    const original_file = config.root_path + config.image_store + '/original/' + tweetObject._id + '.' + tweetObject.imageextension;
     return utilFunctions.downloadFromURL(tweetObject.imageurl, original_file).then((downloadFromURLResult) => {
         const fileIds = [];
         __sizes.forEach((size) => {
-            utilImageFunctions.resize(original_file, config.image_store + '/' + size.title + '/' + tweetObject._id + '.' + tweetObject.imageextension, size.width).then((resizeResopnse) => {
+            utilImageFunctions.resize(original_file, config.root_path + config.image_store + '/' + size.title + '/' + tweetObject._id + '.' + tweetObject.imageextension, size.width).then((resizeResopnse) => {
             }).catch((resizeError) => {
                 console.log(resizeError);
                 console.log('-------------------');

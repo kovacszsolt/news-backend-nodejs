@@ -1,0 +1,21 @@
+{
+  "name": "itcrowd-nodejs",
+  "version": "1.0.0",
+  "description": "ITCrowd Teitter aggretator Server",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/kovacszsolt/itcrowd-nodejs.git"
+  },
+  "main": "webtest.js",
+  "scripts": {
+    "test": "mocha **/*.test.js",
+    "start": "node web.js"
+  },
+  "author": "Zsolt Kovacs",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "express": "^4.16.3"
+  },
+  "devDependencies": {}
+}

@@ -10,6 +10,8 @@ services:
   web:
     image: itcrowd-server:latest
     restart: "on-failure"
+    volumes:
+    - .data/images:/home/node/app/_public/images
     ports:
     - 8090:8090
     depends_on:
@@ -23,3 +25,7 @@ services:
       TWITTERACCESSTOKENKEY: "twitteraccesstokenkey"
       TWITTERACCESSTOKENSECRET: "twitteraccesstokensecret"
       TWITTERSCREENNAME: "smithzsolt"
+      ROOT_PATH: "/home/node/app"
+      DEFAULT_IMAGE: "/twitter/image/default.jpg"
+      IMAGE_STORE: "/_public/images"
+      TWITTEREXCEPTION: "[]"

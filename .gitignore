@@ -3,4 +3,5 @@
 source/config.json
 source/node_modules/
 docker/.data
-source/_public
+source/_public/*
+docker/docker-compose.yml
