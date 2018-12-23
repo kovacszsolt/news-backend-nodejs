@@ -1,8 +1,10 @@
 {
   "port": "8090",
-  "mongo_server": "mongodb://host:port/database",
-  "root_path": "Application root path",
+  "port_ssr": "8080",
+  "mongo_server": "mongodb://host:port",
+  "mongo_database": "database",
   "image_store": "Image files path",
+  "sitemap_domain": "Domain name for Sitemap",
   "default_image": "Image path when not use the image",
   "allow_origin": "Allow Origin for Web Service",
   "twitter_consumer_key": "Twitter API Consumer Key",
@@ -10,5 +12,7 @@
   "twitter_access_token_key": "Twitter API Access Token Key",
   "twitter_access_token_secret": "Twitter API Access Token Secret",
   "twitter_screen_name": "Twitter Display Name",
-  "twitter_excepotion": []
+  "read_count": "One time twitter read",
+  "twitter_excepotion": [],
+  "image_sizes": []
 }

@@ -6,15 +6,13 @@ Store Twitter tweets in Mongo Database
   [Example config](config.example.json)
 
 ## Usage
-- node ./twitter/read
-  Read Tweets from person twitter Channel
-  Store Tags and Tweets
-
-- node ./twitter/process
-  Process Twitter Content URL from Mongo Database
-   Store Meta Data
+- node ./read/read_0_purge.js  
+- node ./read/read_1_twitter.js  
+- node ./read/read_2_meta.js  
+- node ./read/read_3_image.js  
+- node ./read/read_4_resize.js  
+- node ./read/read_5_finish.js  
 
 - node ./web.js
   Web Service
-
 
