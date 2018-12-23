@@ -1,7 +1,5 @@
 .idea/
-.history
-source/config.json
-source/node_modules/
-docker/.data
-source/_public/*
-docker/docker-compose.yml
+node_modules/*
+_public/*
+package-lock.json
+config.json
