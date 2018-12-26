@@ -1,5 +1,4 @@
 .idea/
-node_modules/*
 _public/*
 package-lock.json
 config.json

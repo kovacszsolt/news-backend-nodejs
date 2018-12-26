@@ -8,9 +8,9 @@ const config = () => {
     } else {
         const _config = require(ROOT + 'config.example.json');
         _config.port = getParam('PORT');
-        _config.port_ssr = getParam('PORT_SSR');
+        _config.ssr_port = getParam('SSR_PORT');
         _config.image_store = getParam('IMAGE_STORE');
-        _config.sitemap_domain = getParam('SITEMAP_DOMAIN');
+        _config.ssr_domain = getParam('SSR_DOMAIN');
         _config.default_image = getParam('DEFAULT_IMAGE');
         _config.mongo_server = getParam('MONGOSERVER');
         _config.mongo_database = getParam('MONGODATABASE');
@@ -20,6 +20,7 @@ const config = () => {
         _config.twitter_access_token_key = getParam('TWITTERACCESSTOKENKEY');
         _config.twitter_access_token_secret = getParam('TWITTERACCESSTOKENSECRET');
         _config.twitter_screen_name = getParam('TWITTERSCREENNAME');
+        _config.ssr_imagepath = getParam('SSR_IMAGEPATH');
         _config.twitter_excepotion = JSON.parse(getParam('TWITTEREXCEPTION'));
         _config.read_count = getParam('READ_COUNT');
         _config.image_sizes = JSON.parse(getParam('IMAGE_SIZES'));

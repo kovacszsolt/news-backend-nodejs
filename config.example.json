@@ -1,10 +1,11 @@
 {
   "port": "8090",
-  "port_ssr": "8080",
+  "ssr_port": "8091",
   "mongo_server": "mongodb://host:port",
   "mongo_database": "database",
   "image_store": "Image files path",
-  "sitemap_domain": "Domain name for Sitemap",
+  "ssr_domain": "Domain name for Sitemap",
+  "ssr_imagepath": "Image Path for SSR",
   "default_image": "Image path when not use the image",
   "allow_origin": "Allow Origin for Web Service",
   "twitter_consumer_key": "Twitter API Consumer Key",
