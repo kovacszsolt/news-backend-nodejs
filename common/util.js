@@ -17,7 +17,7 @@ const getHastagsFromText = (str) => {
         if (_regexResult.index === regex.lastIndex) {
             regex.lastIndex++;
         }
-        _regexResult.map((match, index) => {
+        _regexResult.forEach((match, index) => {
             if (index === 1) {
                 _return.push(match.toLowerCase());
             }
@@ -32,7 +32,7 @@ const getUrlFromText = (str) => {
     return (_regex === null) ? '' : _regex[0];
 }
 
-rmDirectory = (dirPath) => {
+const rmDirectory = (dirPath) => {
     try {
         var files = fs.readdirSync(dirPath);
     } catch (e) {

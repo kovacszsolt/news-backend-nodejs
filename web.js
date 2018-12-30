@@ -56,6 +56,19 @@ mongoClient.connect(function (err, client) {
             res.json(tweetList);
         });
     });
+
+    app.get('/image/tag/:tag.jpg', function (req, res) {
+        const fileName = process.cwd() + config.image_store + '/tag/' + req.params.tag + '.jpg';
+        if (fs.existsSync(fileName)) {
+            const requestFileName = config.image_store + '/tag/' + req.params.tag + '.jpg';
+            res.sendFile(requestFileName, {root: './'}, function (err) {
+            });
+        } else {
+            res.sendFile(config.default_image, {root: './'}, function (err) {
+            });
+        }
+    });
+
     app.get('/image/:size/:tweetslug.:extension', function (req, res) {
         const size = req.params.size;
         const tweetslug = req.params.tweetslug;
@@ -98,6 +111,21 @@ mongoClient.connect(function (err, client) {
         });
     });
 
+    ssr.get('/tag/:tagslug', function (req, res) {
+        const tagslug = req.params.tagslug;
+        fs.readFile('ssr.html', 'utf8', (err, data) => {
+            if (err) throw err;
+            const template = handlebars.compile(data, {strict: true});
+            const result = template({
+                title: tagslug + ' List',
+                description: tagslug + ' List',
+                url: config.ssr_domain + 'tag/' + tagslug,
+                image: config.ssr_imagepath + 'tag/' + tagslug + '.jpg'
+            });
+            res.send(result);
+        });
+    });
+
     ssr.get('/:tweetslug', function (req, res) {
         const tweetslug = req.params.tweetslug;
         tweetCollection.find({'slug': tweetslug}).toArray(function (err, tweetList) {
@@ -126,7 +154,20 @@ mongoClient.connect(function (err, client) {
                 });
             }
         });
+    });
 
+    ssr.get('/', function (req, res) {
+        fs.readFile('ssr.html', 'utf8', (err, data) => {
+            if (err) throw err;
+            const template = handlebars.compile(data, {strict: true});
+            const result = template({
+                title: tagslug + ' List',
+                description: tagslug + ' List',
+                url: config.ssr_domain ,
+                image: config.ssr_imagepath + 'deafult.jpg'
+            });
+            res.send(result);
+        });
     });
 
     app.listen(app.get('port'), function () {

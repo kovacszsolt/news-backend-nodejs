@@ -14,6 +14,23 @@
   "twitter_access_token_secret": "Twitter API Access Token Secret",
   "twitter_screen_name": "Twitter Display Name",
   "read_count": "One time twitter read",
-  "twitter_excepotion": [],
-  "image_sizes": []
+  "twitter_excepotion": [
+    "tweet id 1",
+    "tweet id 2",
+    "tweet id 3"
+  ],
+  "image_sizes": [
+    {
+      "name": "size1",
+      "width": 10,
+      "height": 10,
+      "backgroundcolor": "#FFA500"
+    },
+    {
+      "name": "size2",
+      "width": 20,
+      "height": 20,
+      "backgroundcolor": "#FFA500"
+    }
+  ]
 }

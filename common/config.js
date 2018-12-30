@@ -25,7 +25,7 @@ const config = () => {
         _config.read_count = getParam('READ_COUNT');
         _config.image_sizes = JSON.parse(getParam('IMAGE_SIZES'));
 
-        Object.keys(_config).map((_configName) => {
+        Object.keys(_config).forEach((_configName) => {
             if (_config[_configName] === '') {
 
                 util.exit('Config ERROR >>>> ' + _configName);

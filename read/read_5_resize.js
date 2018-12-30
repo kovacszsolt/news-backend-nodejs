@@ -1,7 +1,7 @@
 const config = require('../common/config');
 const util = require('../common/util');
+const image = require('../common/image');
 const fs = require('fs-extra');
-const gm = require('gm').subClass({imageMagick: true});
 let tweetCount = 0;
 const MongoClient = require('mongodb').MongoClient;
 const mongoClient = new MongoClient(config.mongo_server, {useNewUrlParser: true});
@@ -21,31 +21,20 @@ mongoClient.connect(function (err, client) {
             config.image_sizes.forEach((size) => {
                 const targetPath = process.cwd() + config.image_store + '/' + size.name + '/';
                 const targetFile = targetPath + tweet._id + '.' + tweet.extension;
-                imageResize(tweetCollection, tweet, sourceFile, targetFile, size.width);
+                image.resize(sourceFile, targetFile, size.width, size.height).then((a) => {
+                    tweetCollection.updateOne(tweet, {$set: {status: 3}}, function (updateErr, result) {
+                        if (updateErr === null) {
+                            tweetCount--;
+                            console.log(tweetCount);
+                            if (tweetCount === 0) {
+                                process.exit(0);
+                            }
+                        } else {
+                            console.log(err);
+                        }
+                    });
+                });
             });
         });
     });
 });
-
-const imageResize = (collection, tweet, sourceFile, destionationFile, width) => {
-    gm(sourceFile)
-        .resize(width)
-        .noProfile()
-        .write(destionationFile, function (err) {
-            if (err === undefined) {
-                collection.updateOne(tweet, {$set: {status: 3}}, function (updateErr, result) {
-                    if (updateErr === null) {
-                        tweetCount--;
-                        console.log(tweetCount);
-                        if (tweetCount === 0) {
-                            process.exit(0);
-                        }
-                    } else {
-                        console.log(err);
-                    }
-                });
-            } else {
-                console.log(err);
-            }
-        });
-}

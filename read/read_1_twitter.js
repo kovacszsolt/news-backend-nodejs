@@ -21,7 +21,7 @@ mongoClient.connect(function (err, client) {
         tweets = tweets.filter(q => !config.twitter_excepotion.includes(q.id.toString()));
         tweet_count = tweets.length;
         const tweetCollection = db.collection('tweet');
-        _tweetList = [];
+        const _tweetList = [];
         tweets.forEach((tweet) => {
             const created_at = tweet.created_at.split(' ');
             const created_date=new Date(created_at[0] + ', ' + created_at[2] + ' ' + created_at[1] + ' ' + created_at[5] + ' ' + created_at[3] + ' GMT');

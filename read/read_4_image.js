@@ -26,8 +26,10 @@ const downloadFromURL = (collection, tweet, target) => {
         if (url.substring(0, 2) === '//') {
             url = 'http:' + url;
         }
+    } else {
+        url = '';
     }
-    if ((url.substring(0, 1) === '/') || (url === undefined)) {
+    if (url.substring(0, 1) == '/') {
         resolve(false);
     }
     request(url, {encoding: 'binary'}, function (error, response, body) {

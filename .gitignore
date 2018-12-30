@@ -1,4 +1,7 @@
 .idea/
-_public/*
+_public/images/original/*
+_public/images/size1/*
+_public/images/size2/*
+_public/images/tag/*
 package-lock.json
 config.json
