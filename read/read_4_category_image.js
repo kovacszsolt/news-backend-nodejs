@@ -8,7 +8,7 @@ const mongoClient = new MongoClient(config.mongo_server, {useNewUrlParser: true}
 mongoClient.connect(function (err, client) {
     const db = client.db(config.mongo_database);
     const tweetCollection = db.collection('tweet');
-    tweetCollection.find({'status': 0}).toArray(function (err, tweetList) {
+    tweetCollection.find().toArray(function (err, tweetList) {
         const categoryList = [];
         tweetList.forEach((tweet) => {
             tweet.tags.forEach((tag) => {
@@ -17,14 +17,14 @@ mongoClient.connect(function (err, client) {
                 }
             });
         });
-        console.log('categoryCount', categoryList.length);
+        console.log('read_4_category_image', 'categoryCount', categoryList.length);
         const targetPath = process.cwd() + config.image_store + '/tag/';
         fs.ensureDirSync(targetPath);
         let categoryListNumber = categoryList.length;
         categoryList.forEach((category) => {
             image.createImageWithText(targetPath + category + '.jpg', imageConfig.width, imageConfig.height, imageConfig.backgroundcolor, category).then((imageResult) => {
                 categoryListNumber--;
-                console.log(categoryListNumber, category);
+                console.log('read_4_category_image', categoryListNumber, category);
                 if (categoryListNumber === 0) {
                     process.exit(0);
                 }

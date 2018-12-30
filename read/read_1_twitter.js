@@ -16,7 +16,6 @@ mongoClient.connect(function (err, client) {
         screen_name: config.twitter_screen_name,
         count: config.read_count
     }, async function (error, tweets, response) {
-        console.log(tweets[0].created_at.split(' '));
         tweets = tweets.filter(q => q.retweet_count === 0);
         tweets = tweets.filter(q => !config.twitter_excepotion.includes(q.id.toString()));
         tweet_count = tweets.length;
@@ -24,7 +23,7 @@ mongoClient.connect(function (err, client) {
         const _tweetList = [];
         tweets.forEach((tweet) => {
             const created_at = tweet.created_at.split(' ');
-            const created_date=new Date(created_at[0] + ', ' + created_at[2] + ' ' + created_at[1] + ' ' + created_at[5] + ' ' + created_at[3] + ' GMT');
+            const created_date = new Date(created_at[0] + ', ' + created_at[2] + ' ' + created_at[1] + ' ' + created_at[5] + ' ' + created_at[3] + ' GMT');
             _tweetList.push({
                 id: tweet.id_str,
                 text: tweet.text,
@@ -34,7 +33,7 @@ mongoClient.connect(function (err, client) {
                 status: 0
             });
             tweet_count--;
-            console.log(tweet_count);
+            console.log('read_1_twitter', tweet_count);
         });
         tweetCollection.insertMany(
             _tweetList

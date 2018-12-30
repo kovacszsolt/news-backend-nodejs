@@ -52,7 +52,7 @@ mongoClient.connect(function (err, client) {
     });
 
     app.get('/list/', function (req, res) {
-        tweetCollection.find({'status': 3}).toArray(function (err, tweetList) {
+        tweetCollection.find({'status': 2}).toArray(function (err, tweetList) {
             res.json(tweetList);
         });
     });
@@ -96,7 +96,7 @@ mongoClient.connect(function (err, client) {
 
     ssr.get('/sitemap.xml', function (req, res) {
         const output = [];
-        tweetCollection.find({'status': 3}).toArray(function (err, tweetList) {
+        tweetCollection.find({'status': 2}).toArray(function (err, tweetList) {
             tweetList.forEach((tweet) => {
                 output.push({
                     'url': {

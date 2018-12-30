@@ -39,13 +39,13 @@ const getMeta = (collection, tweet, url) => {
                         _meta.image = _meta.url.split('/').slice(0, 3).join('/') + _meta.image;
                     }
                 }
-                _meta.extension = getFileExtension(_meta.image);
+                _meta.extension = util.getFileExtension(_meta.image);
 
                 _meta.status = 1;
                 collection.updateOne(tweet, {$set: _meta}, function (err, result) {
                     if (err === null) {
                         tweetCount--;
-                        console.log(tweetCount);
+                        console.log('read_2_meta', tweetCount);
                         if (tweetCount === 0) {
                             process.exit(0);
                         }
@@ -53,6 +53,10 @@ const getMeta = (collection, tweet, url) => {
                         console.log(err);
                     }
                 });
+            } else {
+                console.log('url', url);
+                console.log('error', error);
+                process.exit(-1);
             }
         } catch (ee) {
             console.log(tweet);
@@ -61,12 +65,4 @@ const getMeta = (collection, tweet, url) => {
             process.exit(-1);
         }
     });
-}
-
-const getFileExtension = (file) => {
-    let _return = file.split('.').slice(file.split('.').length - 1).toString();
-    if (_return.indexOf('?') !== -1) {
-        _return = _return.substring(0, _return.indexOf('?'));
-    }
-    return _return;
 }

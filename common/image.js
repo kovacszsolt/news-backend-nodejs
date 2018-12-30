@@ -3,6 +3,7 @@ const createImage = (filename, width, height, background) => {
     return Jimp.create(width, height, background, (err, image) => {
         image.write(filename); // save
 
+
     });
 }
 

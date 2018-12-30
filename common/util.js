@@ -1,3 +1,5 @@
+const request = require('request');
+const fs = require('fs-extra');
 const exit = (__message, __exit = true) => {
     console.log('-------------------------');
     console.log('-------------------------');
@@ -49,10 +51,48 @@ const rmDirectory = (dirPath) => {
     fs.rmdirSync(dirPath);
 };
 
+const getFileExtension = (file) => {
+    let _return = file.split('.').slice(file.split('.').length - 1).toString();
+    if (_return.indexOf('?') !== -1) {
+        _return = _return.substring(0, _return.indexOf('?'));
+    }
+    return _return;
+}
+
+const downloadFromURL = (source, target) => {
+    return new Promise((resolve, reject) => {
+        let url = source;
+        if (url !== undefined) {
+            if (url.substring(0, 2) === '//') {
+                url = 'http:' + url;
+            }
+        } else {
+            url = '';
+        }
+        request(url, {encoding: 'binary'}, function (error, response, body) {
+            if (error === null) {
+                fs.writeFile(target, body, 'binary', function (err) {
+                    if (err === null) {
+                        resolve(true);
+                    } else {
+                        reject(err);
+                        console.log('write error', err);
+                    }
+                });
+            } else {
+                reject(error);
+                console.log('request error', error);
+            }
+        });
+    });
+}
+
 
 module.exports = {
+    getFileExtension,
     getHastagsFromText,
     getUrlFromText,
     rmDirectory,
+    downloadFromURL,
     exit
 };
