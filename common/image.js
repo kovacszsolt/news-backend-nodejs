@@ -1,4 +1,5 @@
 const Jimp = require('jimp');
+const sharp = require('sharp');
 const createImage = (filename, width, height, background) => {
     return Jimp.create(width, height, background, (err, image) => {
         image.write(filename); // save
@@ -22,19 +23,16 @@ const createImageWithText = (filename, width, height, background, text) => {
     });
 }
 
-const resize = (source, target, width, height) => {
-    return new Promise((resolve, reject) => {
-        Jimp.read(source)
-            .then(image => {
-                image.resize(width, height)
-                image.quality(80)
-                image.write(target);
-                resolve(true);
-            })
-            .catch((err) => {
-                reject(err);
-            });
-    });
+const resize = async (source, target, width, height) => {
+    return sharp(source)
+        .resize(width, height)
+        .toFile(target)
+        .then((data) => {
+            return data;
+        })
+        .catch((err) => {
+            return err;
+        });
 }
 
 const measureText = (font, text) => {
