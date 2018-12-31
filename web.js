@@ -73,24 +73,17 @@ mongoClient.connect(function (err, client) {
         const size = req.params.size;
         const tweetslug = req.params.tweetslug;
         const extension = req.params.extension;
-        tweetCollection.find({'slug': tweetslug}).toArray(function (err, tweetList) {
-            if (tweetList.length === 1) {
-                const tweet = tweetList[0];
-                const fileName = process.cwd() + config.image_store + '/' + size + '/' + tweet._id + '.' + extension;
-                if (fs.existsSync(fileName)) {
-                    const requestFileName = config.image_store + '/' + size + '/' + tweet._id + '.' + extension;
-                    res.sendFile(requestFileName, {root: './'}, function (err) {
-                    });
-                } else {
-                    res.sendFile(config.default_image, {root: './'}, function (err) {
-                    });
-                }
-                console.log(fileName);
-            } else {
-                res.sendFile(config.default_image, {root: './'}, function (err) {
-                });
-            }
-        });
+        const fileName = process.cwd() + config.image_store + '/' + size + '/' + tweetslug + '.' + extension;
+        console.log(fileName);
+        if (fs.existsSync(fileName)) {
+            const requestFileName = config.image_store + '/' + size + '/' + tweetslug + '.' + extension;
+            res.sendFile(requestFileName, {root: './'}, function (err) {
+            });
+        } else {
+            console.log(fileName, 'ERROR', 'NOFILE');
+            res.sendFile(config.default_image, {root: './'}, function (err) {
+            });
+        }
     });
 
 
@@ -163,7 +156,7 @@ mongoClient.connect(function (err, client) {
             const result = template({
                 title: tagslug + ' List',
                 description: tagslug + ' List',
-                url: config.ssr_domain ,
+                url: config.ssr_domain,
                 image: config.ssr_imagepath + 'deafult.jpg'
             });
             res.send(result);
