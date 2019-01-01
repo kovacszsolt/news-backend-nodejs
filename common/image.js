@@ -1,5 +1,5 @@
-const Jimp = require('jimp');
 const sharp = require('sharp');
+const fs = require('fs-extra');
 const createImage = (filename, width, height, background) => {
     return Jimp.create(width, height, background, (err, image) => {
         image.write(filename); // save
@@ -7,20 +7,47 @@ const createImage = (filename, width, height, background) => {
 
     });
 }
-
-const createImageWithText = (filename, width, height, background, text) => {
+const createSvgWithText = (filename, width, height, background, text) => {
     return new Promise((resolve, reject) => {
-        Jimp.create(width, height, background, (err, image) => {
-            Jimp.loadFont(Jimp.FONT_SANS_64_WHITE).then((font) => { // load font from .fnt file
-                let totalWidth = measureText(font, text);
-                image.print(font, Math.floor(width / 2 - totalWidth / 2), Math.floor(height / 2 - 32), text);
-                image.write(filename); // save
+        const content = '<svg xmlns="http://www.w3.org/2000/svg" height="' + height + '" width="' + width + '" style="background-color: ' + background + '">\n' +
+            '    <text text-anchor="middle" x="' + width / 2 + '" y="' + height / 2 + '" fill="white" style="font-size:40px">' + text + '</text>\n' +
+            '</svg>\n';
+        fs.writeFile(filename, content, function (err) {
+            if (err) {
+                reject(err);
+            } else {
                 resolve(true);
-            }).catch((e) => {
-                reject(e);
-            });
+            }
         });
     });
+
+}
+
+const createImageWithText = (filename, width, height, background, text) => {
+    return createSvgWithText(filename + '.tmp', width, height, background, text).then((a) => {
+        return svgToJpg(filename + '.tmp', filename).then((b) => {
+            fs.removeSync(filename + '.tmp');
+            return b;
+        });
+    }).catch((e) => {
+        return e;
+    });
+}
+
+const svgToJpg = (source, target) => {
+    return sharp(source)
+        .jpeg({quality: 80})
+        .flatten({
+            background: '#FFA500'
+        })
+        //.embed()
+        .toFile(target)
+        .then((data) => {
+            return data;
+        })
+        .catch((err) => {
+            return err;
+        });
 }
 
 const resize = async (source, target, width, height) => {
@@ -35,20 +62,7 @@ const resize = async (source, target, width, height) => {
         });
 }
 
-const measureText = (font, text) => {
-    var x = 0;
-    for (var i = 0; i < text.length; i++) {
-        if (font.chars[text[i]]) {
-            x += font.chars[text[i]].xoffset
-                + (font.kernings[text[i]] && font.kernings[text[i]][text[i + 1]] ? font.kernings[text[i]][text[i + 1]] : 0)
-                + (font.chars[text[i]].xadvance || 0);
-        }
-    }
-    return x;
-};
-
 module.exports = {
-    createImage,
     createImageWithText,
     resize
 };

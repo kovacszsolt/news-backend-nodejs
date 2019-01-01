@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "repository": "https://github.com/kovacszsolt/nodejs-twitter-reader",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node ./web.js",
@@ -16,7 +17,6 @@
     "express": "^4.16.3",
     "fs-extra": "^7.0.1",
     "hbs": "^4.0.1",
-    "jimp": "^0.6.0",
     "mongodb": "^3.1.10",
     "request": "^2.88.0",
     "sharp": "^0.21.1",

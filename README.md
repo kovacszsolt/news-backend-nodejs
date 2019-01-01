@@ -6,12 +6,8 @@ Store Twitter tweets in Mongo Database
   [Example config](config.example.json)
 
 ## Usage
-- node ./read/read_0_purge.js  
-- node ./read/read_1_twitter.js  
-- node ./read/read_2_meta.js  
-- node ./read/read_3_image.js  
-- node ./read/read_4_resize.js  
-- node ./read/read_5_finish.js  
+- sh read_1.sh  
+- sh read_2.sh  
 
 - node ./web.js
   Web Service
