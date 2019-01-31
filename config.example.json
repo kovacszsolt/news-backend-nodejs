@@ -14,6 +14,11 @@
   "twitter_access_token_secret": "Twitter API Access Token Secret",
   "twitter_screen_name": "Twitter Display Name",
   "read_count": "One time twitter read",
+  "default_user": {
+    "emai": "name@domain.ltd",
+    "name": "John Doe",
+    "password": "defaultpassword"
+  },
   "twitter_excepotion": [
     "tweet id 1",
     "tweet id 2",
