@@ -1,3 +1,5 @@
+const image = require('./common/image');
+
 const slug = require('slug');
 
 const request = require('request');
@@ -80,6 +82,21 @@ mongoClient.connect(function (err, client) {
     const sessionCollection = db.collection('session');
     const settingsCollection = db.collection('setttings');
 
+    app.get('/tweet/meta/get/', function (req, res) {
+        const response = {status: 'ok'};
+        const tags = [];
+        tweetCollection.find().toArray(function (err, tweetList) {
+            tweetList.forEach((tweet) => {
+                tweet.tags.forEach((tag) => {
+                    if (!tags.includes(tag)) {
+                        tags.push(tag);
+                    }
+                });
+            });
+            res.json(tags);
+        });
+
+    });
 
     app.get('/session/get/', function (req, res) {
         const ip = req.header('x-forwarded-for') || req.connection.remoteAddress;
@@ -112,6 +129,49 @@ mongoClient.connect(function (err, client) {
         });
 
     });
+
+    app.post('/tweet/save/', upload.array(), function (req, res, next) {
+        const data = req.body;
+        const response = {status: 'ok'};
+        const extension = util.getFileExtension(data.image);
+        const targetPath = process.cwd() + config.image_store + '/original/';
+        fs.ensureDirSync(targetPath);
+        const targetFileOriginal = targetPath + data.slug + '.' + extension;
+        util.downloadFromURL(data.image, targetFileOriginal).then((a) => {
+            const record = {
+                id: '',
+                text: '',
+                shorturl: '',
+                tags: [],
+                createTime: new Date(),
+                title: data.title,
+                url: data.url,
+                description: data.description,
+                image: data.image,
+                slug: data.slug,
+                tags: data.tags,
+                status: 1,
+                extension: util.getFileExtension(data.image)
+            }
+            tweetCollection.insertOne(record, function (err, result) {
+                let imageCount = config.image_sizes.length;
+                config.image_sizes.forEach((imageSize) => {
+                    const file = data.slug + '.' + extension;
+                    const targetPath = process.cwd() + config.image_store + '/' + imageSize.name + '/';
+                    fs.ensureDirSync(targetPath);
+                    image.resize(process.cwd() + config.image_store + '/original/' + file, targetPath + file, imageSize.width, imageSize.height).then((a) => {
+                        imageCount--;
+                        if (imageCount === 0) {
+                            res.json(response);
+                        }
+                    });
+                });
+            });
+        }).catch((e) => {
+            res.json(response);
+        });
+    });
+
 
     /**
      * Login
