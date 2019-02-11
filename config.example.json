@@ -15,7 +15,7 @@
   "twitter_screen_name": "Twitter Display Name",
   "read_count": "One time twitter read",
   "default_user": {
-    "emai": "name@domain.ltd",
+    "email": "name@domain.ltd",
     "name": "John Doe",
     "password": "defaultpassword"
   },

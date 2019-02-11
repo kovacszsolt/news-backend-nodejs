@@ -16,6 +16,7 @@ mongoClient.connect(function (err, client) {
         screen_name: config.twitter_screen_name,
         count: config.read_count
     }, async function (error, tweets, response) {
+        console.log('error',error);
         tweets = tweets.filter(q => q.retweet_count === 0);
         tweets = tweets.filter(q => !config.twitter_excepotion.includes(q.id.toString()));
         tweet_count = tweets.length;
