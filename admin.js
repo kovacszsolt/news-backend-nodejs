@@ -17,7 +17,13 @@ const multer = require('multer');
 const app = express();
 
 app.set('port', config.port);
-
+const TwitterAPI = require('twitter');
+const TwitterClient = new TwitterAPI({
+    consumer_key: config.twitter_consumer_key,
+    consumer_secret: config.twitter_consumer_secret,
+    access_token_key: config.twitter_access_token_key,
+    access_token_secret: config.twitter_access_token_secret
+});
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(function (req, res, next) {
@@ -105,6 +111,62 @@ mongoClient.connect(function (err, client) {
         });
     });
 
+
+    app.get('/tweet/new/', function (req, res) {
+        const response = {status: 'ok'};
+        TwitterClient.get('statuses/user_timeline', {
+            screen_name: config.twitter_screen_name,
+            count: config.read_count
+        }, async function (error, tweets, response) {
+            tweets = tweets.filter(q => q.retweet_count === 0);
+            tweet_count = tweets.length;
+            console.log(tweet_count);
+            const _tweetList = [];
+            const _urls = [];
+            tweets.forEach((tweet) => {
+                request(util.getUrlFromText(tweet.text), function (error, response, body) {
+                    try {
+                        if (error === null) {
+                            tweet_count--;
+                            const _cheerio = cheerio.load(body);
+                            _urls.push(_cheerio('meta[property="og:url"]').attr('content'));
+                            console.log(tweet_count);
+                            if (tweet_count === 0) {
+                                getNew(res, _urls);
+                            }
+                        }
+                    } catch (e) {
+
+                    }
+                });
+            });
+        });
+    });
+
+    /**
+     * New Urls
+     * @param res
+     * @param urls
+     */
+    getNew = (res, urls) => {
+        tweetCollection.find({url: {$in: urls}}).toArray(function (err, tweetList) {
+            const __url = [];
+            tweetList.forEach((tweet) => {
+                __url.push(tweet.url);
+            });
+            const newUrl = [];
+            urls.forEach((url) => {
+                if (__url.includes(url)) {
+                    newUrl.push(url);
+                }
+            });
+            res.json(newUrl);
+
+        });
+
+
+    }
+
     app.get('/tweet/list/', function (req, res) {
         tweetCollection.find().sort({createTime: -1}).toArray(function (err, tweetList) {
             res.json(tweetList);
@@ -127,7 +189,6 @@ mongoClient.connect(function (err, client) {
                 res.json(response);
             }
         });
-
     });
 
     app.post('/tweet/save/', upload.array(), function (req, res, next) {
