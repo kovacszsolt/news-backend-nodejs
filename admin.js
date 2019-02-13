@@ -129,8 +129,11 @@ mongoClient.connect(function (err, client) {
                         if (error === null) {
                             tweet_count--;
                             const _cheerio = cheerio.load(body);
-                            _urls.push(_cheerio('meta[property="og:url"]').attr('content'));
-                            console.log(tweet_count);
+                            _urls.push(
+                                {
+                                    url: _cheerio('meta[property="og:url"]').attr('content'),
+                                    title: _cheerio('meta[property="og:title"]').attr('content')
+                                });
                             if (tweet_count === 0) {
                                 getNew(res, _urls);
                             }
@@ -149,22 +152,20 @@ mongoClient.connect(function (err, client) {
      * @param urls
      */
     getNew = (res, urls) => {
-        tweetCollection.find({url: {$in: urls}}).toArray(function (err, tweetList) {
+        const urlTmp = urls.map(u => u.url);
+        tweetCollection.find({url: {$in: urlTmp}}).toArray(function (err, tweetList) {
             const __url = [];
             tweetList.forEach((tweet) => {
                 __url.push(tweet.url);
             });
             const newUrl = [];
             urls.forEach((url) => {
-                if (__url.includes(url)) {
+                if (__url.includes(url.url)) {
                     newUrl.push(url);
                 }
             });
             res.json(newUrl);
-
         });
-
-
     }
 
     app.get('/tweet/list/', function (req, res) {
