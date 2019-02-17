@@ -5,6 +5,7 @@ const slug = require('slug');
 const request = require('request');
 const cheerio = require('cheerio');
 const util = require('./common/util');
+const meta = require('./common/meta');
 var {ObjectId} = require('mongodb');
 const config = require('./common/config');
 const express = require('express');
@@ -124,23 +125,17 @@ mongoClient.connect(function (err, client) {
             const _tweetList = [];
             const _urls = [];
             tweets.forEach((tweet) => {
-                request(util.getUrlFromText(tweet.text), function (error, response, body) {
-                    try {
-                        if (error === null) {
-                            tweet_count--;
-                            const _cheerio = cheerio.load(body);
-                            _urls.push(
-                                {
-                                    url: _cheerio('meta[property="og:url"]').attr('content'),
-                                    title: _cheerio('meta[property="og:title"]').attr('content')
-                                });
-                            if (tweet_count === 0) {
-                                getNew(res, _urls);
-                            }
-                        }
-                    } catch (e) {
-
+                meta.getMetaFromUrl(util.getUrlFromText(tweet.text)).then((metaData) => {
+                    tweet_count--;
+                    console.log(tweet_count);
+                    _urls.push(metaData);
+                    if (tweet_count === 0) {
+                        getNew(_urls).then((newUrls) => {
+                            res.json(newUrls);
+                        });
                     }
+                }).catch((metaError) => {
+                    res.json(metaError);
                 });
             });
         });
@@ -151,26 +146,35 @@ mongoClient.connect(function (err, client) {
      * @param res
      * @param urls
      */
-    getNew = (res, urls) => {
-        const urlTmp = urls.map(u => u.url);
-        tweetCollection.find({url: {$in: urlTmp}}).toArray(function (err, tweetList) {
-            const __url = [];
-            tweetList.forEach((tweet) => {
-                __url.push(tweet.url);
+    getNew = (urls) => {
+        return new Promise((resolve, reject) => {
+            const urlTmp = urls.map(u => u.url);
+            tweetCollection.find({url: {$in: urlTmp}}).toArray(function (err, tweetList) {
+                const __url = [];
+                tweetList.forEach((tweet) => {
+                    __url.push(tweet.url);
+                });
+                const newUrl = [];
+                urls.forEach((url) => {
+                    if (__url.includes(url.url)) {
+                        newUrl.push(url);
+                    }
+                });
+                resolve(newUrl);
             });
-            const newUrl = [];
-            urls.forEach((url) => {
-                if (__url.includes(url.url)) {
-                    newUrl.push(url);
-                }
-            });
-            res.json(newUrl);
         });
     }
 
     app.get('/tweet/list/', function (req, res) {
         tweetCollection.find().sort({createTime: -1}).toArray(function (err, tweetList) {
             res.json(tweetList);
+        });
+    });
+
+    app.get('/tweet/delete/:id', function (req, res) {
+        const response = {status: 'ok'};
+        tweetCollection.deleteOne({_id: ObjectId(req.params.id)}, function (err, results) {
+            res.json(response);
         });
     });
 

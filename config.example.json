@@ -24,6 +24,12 @@
     "tweet id 2",
     "tweet id 3"
   ],
+  "domain_change": [
+    {
+      "originalhost": "m.foo.bar",
+      "newhost": "foo.bar"
+    }
+  ],
   "image_sizes": [
     {
       "name": "size1",
