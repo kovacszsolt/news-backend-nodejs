@@ -3,7 +3,7 @@ const util = require('./util');
 const cheerio = require('cheerio');
 const slug = require('slug');
 const config = require('./config');
-const getMetaFromUrl = (url, created_at) => {
+const getMetaFromUrl = (url, extra) => {
     return new Promise((resolve, reject) => {
         request(util.getUrlFromText(url), function (error, response, body) {
             try {
@@ -12,14 +12,17 @@ const getMetaFromUrl = (url, created_at) => {
                     if (meta.url === undefined) {
                         const _find = config.domain_change.find(f => f.originalhost === response.request.host);
                         if (_find !== undefined) {
-                            getMetaFromUrl(response.request.uri.protocol + '//' + _find.newhost + response.request.uri.path, created_at).then((newResponse) => {
+                            getMetaFromUrl(response.request.uri.protocol + '//' + _find.newhost + response.request.uri.path, extra).then((newResponse) => {
                                 resolve(newResponse);
                             }).catch((e) => {
                                 reject(e);
                             });
                         }
                     } else {
-                        meta.created_at = created_at;
+                        Object.keys(extra).forEach((key => {
+                            meta[key] = extra[key];
+                        }));
+                        //meta.created_at = created_at;
                         resolve(meta);
                     }
                 } else {
