@@ -12,7 +12,7 @@ config.image_sizes.forEach((imageSize) => {
     Promise.all(
         newSizeFiles.map(newSizeFile =>
             image.resize(process.cwd() + config.image_store + '/original/' + newSizeFile, sizePath + newSizeFile, imageSize.width, imageSize.height)
-        )).then((qq) => {
+        )).then(() => {
         _count--;
         console.log(_count);
     })
