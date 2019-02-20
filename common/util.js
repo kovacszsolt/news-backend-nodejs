@@ -28,6 +28,11 @@ const getHastagsFromText = (str) => {
     return _return;
 }
 
+const arrayDiff = (array1, array2) => {
+    return Array.from(new Set(
+        [...new Set(array1)].filter(x => !new Set(array2).has(x))));
+}
+
 const getUrlFromText = (str) => {
     const regex = /(?:(?:https?|ftp|file):\/\/|www\.|ftp\.)(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[-A-Z0-9+&@#\/%=~_|$?!:,.])*(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[A-Z0-9+&@#\/%=~_|$])/igm;
     const _regex = regex.exec(str);
@@ -94,5 +99,6 @@ module.exports = {
     getUrlFromText,
     rmDirectory,
     downloadFromURL,
-    exit
+    exit,
+    arrayDiff
 };
