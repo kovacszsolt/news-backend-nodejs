@@ -66,15 +66,18 @@ const getFileExtension = (file) => {
 
 const downloadFromURL = (source, target) => {
     return new Promise((resolve, reject) => {
+        console.log('source',source);
         let url = source;
         if (url !== undefined) {
             if (url.substring(0, 2) === '//') {
                 url = 'http:' + url;
             }
         } else {
-            url = '';
+            //url = '';
+            console.log('error', source);
+            reject({url: source});
         }
-        request(url, {encoding: 'binary'}, function (error, response, body) {
+        request(url, {encoding: 'binary'}, (error, response, body) => {
             if (error === null) {
                 fs.writeFile(target, body, 'binary', function (err) {
                     if (err === null) {
