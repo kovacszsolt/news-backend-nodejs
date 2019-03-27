@@ -5,5 +5,6 @@ _public/images/original/*
 _public/images/size1/*
 _public/images/size2/*
 _public/images/tag/*
+_public/update.json
 package-lock.json
 config.json
