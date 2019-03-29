@@ -52,7 +52,7 @@ mongoClient.connect(function (err, client) {
     });
 
     app.get('/list/', function (req, res) {
-        tweetCollection.find().toArray(function (err, tweetList) {
+        tweetCollection.find({status: 3}).toArray(function (err, tweetList) {
             res.json(tweetList);
         });
     });

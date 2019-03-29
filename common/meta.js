@@ -16,7 +16,7 @@ const getMetaFromUrl = (url, extra) => {
         request(util.getUrlFromText(url), function (error, response, body) {
             try {
                 if (error === null) {
-                    const meta = getMetaFromBody(body);
+                    const meta = getMetaFromBody(body, response.request);
                     if (meta.url === undefined) {
                         const _find = config.domain_change.find(f => f.originalhost === response.request.host);
                         if (_find !== undefined) {
@@ -44,12 +44,24 @@ const getMetaFromUrl = (url, extra) => {
         });
     });
 }
-const getMetaFromBody = (body) => {
+const getMetaFromBody = (body, response_request) => {
     const _cheerio = cheerio.load(body);
     const meta = {};
     meta.url = _cheerio('meta[property="og:url"]').attr('content');
+    if (meta.url === undefined) {
+        meta.url = _cheerio('link[rel="canonical"]').attr('href');
+        if (meta.url === undefined) {
+            meta.url = response_request.uri.href;
+        }
+    }
     meta.title = _cheerio('meta[property="og:title"]').attr('content');
+    if (meta.title === undefined) {
+        meta.title = _cheerio('title').text();
+    }
     meta.description = _cheerio('meta[property="og:description"]').attr('content');
+    if (meta.description === undefined) {
+        meta.description = '';
+    }
     meta.image = _cheerio('meta[property="og:image"]').attr('content');
     if (meta.url === undefined) {
         return meta;
@@ -59,6 +71,9 @@ const getMetaFromBody = (body) => {
     }
     meta.slug = slug(meta.title).toLowerCase();
     if (meta.image === undefined) {
+        console.log(meta);
+        console.log(_cheerio('img'));
+        process.exit(0);
         meta.image = '';
         meta.extension = '';
     } else {

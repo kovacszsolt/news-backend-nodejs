@@ -10,6 +10,7 @@ mongoClient.connect(function (err, client) {
     tweetCollection.find({status: 1}).toArray(function (err, tweetList) {
         let tweetCount = tweetList.length;
         let tweetError = 0;
+        const tweetErrorList = [];
         tweetList.forEach((tweet) => {
             meta.getMetaFromUrl(tweet.url_short, []).then((data) => {
                 tweetCollection.updateOne({id: tweet.id}, {$set: {status: 2, meta: data}}, function (err, res) {
@@ -17,13 +18,17 @@ mongoClient.connect(function (err, client) {
                     console.log(tweetCount);
                     if (tweetCount === 0) {
                         console.log('tweetList.length', tweetList.length);
-                        console.log('tweetList.error', tweetError);
+                        console.log('tweetError', tweetError);
+                        console.log('tweetErrorList', tweetErrorList);
                         process.exit(0);
                     }
                 });
             }).catch((e) => {
                 tweetCount--;
+                tweetErrorList.push(tweet);
                 console.log(tweetCount);
+                console.log(e);
+                console.log(tweet);
                 tweetError++;
                 if (tweetCount === 0) {
                     console.log('tweetList.length', tweetList.length);

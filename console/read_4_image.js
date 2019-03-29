@@ -10,7 +10,7 @@ mongoClient.connect(function (err, client) {
     const db = client.db(config.mongo_database);
     const tweetCollection = db.collection('tweet');
 
-    tweetCollection.find({status: 2}).toArray(function (err, tweetList) {
+    tweetCollection.find({status: 2, meta: {url: ''}}).toArray(function (err, tweetList) {
         tweetList = tweetList.filter(q => (q.meta.image !== '' && q.status === 2))
         let tweetCount = tweetList.length;
         if (tweetCount !== 0) {
