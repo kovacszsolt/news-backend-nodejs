@@ -1,5 +1,5 @@
 const util = require('../common/util');
-
+const fs = require('fs-extra');
 const config = require('../common/config');
 const TwitterAPI = require('twitter');
 const TwitterClient = new TwitterAPI({
@@ -43,7 +43,17 @@ mongoClient.connect(function (err, client) {
                     , function (err, result) {
                         if (err === null) {
                             console.log(result.insertedIds);
-                            process.exit(0);
+                            if (!fs.existsSync('./_public')) {
+                                fs.mkdirSync('./_public');
+                            }
+                            fs.writeJson('./_public/update.json', {lastAddDate: Math.round(new Date().getTime() / 1000)})
+                                .then(() => {
+                                    process.exit(0);
+                                })
+                                .catch(err => {
+                                    console.error(err)
+                                });
+
                         } else {
                             console.log(err);
                             process.exit(0);

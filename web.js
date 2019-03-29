@@ -45,12 +45,6 @@ mongoClient.connect(function (err, client) {
     const tweetCollection = db.collection('tweet');
     const settingsCollection = db.collection('setttings');
 
-    app.get('/update/', function (req, res) {
-        settingsCollection.find({'key': 'update'}).toArray(function (err, settingsList) {
-            res.json(settingsList[0]);
-        });
-    });
-
     app.get('/list/', function (req, res) {
         tweetCollection.find({status: 3}).toArray(function (err, tweetList) {
             res.json(tweetList);
@@ -67,6 +61,14 @@ mongoClient.connect(function (err, client) {
             res.sendFile(config.default_image, {root: './'}, function (err) {
             });
         }
+    });
+
+    app.get('/update', function (req, res) {
+        console.log('wee');
+        const fileName = '/_public/update.json';
+        res.sendFile(fileName, {root: './'}, function (err) {
+        });
+
     });
 
     app.get('/image/:size/:tweetslug.:extension', function (req, res) {
