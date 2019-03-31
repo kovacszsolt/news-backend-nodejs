@@ -1,15 +1,14 @@
 {
-  "name": "twitter",
+  "name": "news-backend-nodejs",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "repository": "https://github.com/kovacszsolt/nodejs-twitter-reader",
+  "repository": "https://github.com/kovacszsolt/news-backend-nodejs",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node ./web.js",
-    "sonar": "node ./sonar.js"
+    "start": "node ./web.js"
   },
-  "author": "",
+  "author": "Zsolt Kovacs",
   "license": "ISC",
   "dependencies": {
     "body-parser": "^1.18.3",
@@ -24,8 +23,5 @@
     "slug": "^0.9.2",
     "twitter": "^1.7.1",
     "xmlbuilder": "^10.1.1"
-  },
-  "devDependencies": {
-    "sonarqube-scanner": "^2.1.2"
   }
 }
