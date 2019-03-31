@@ -72,11 +72,12 @@ mongoClient.connect(function (err, client) {
     });
 
     app.get('/search/:text', function (req, res) {
+        req.params.text = 'Google';
         tweetCollection.find(
             {
                 $or: [
-                    {"meta.description": {'$regex': req.params.text}}
-                    , {"meta.title": {'$regex': req.params.text}}
+                    {"meta.title": new RegExp(req.params.text, "i")},
+                    {"meta.description": new RegExp(req.params.text, "i")}
                 ]
             }
         ).toArray((err, tweetList) => {
