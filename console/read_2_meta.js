@@ -26,9 +26,9 @@ mongoClient.connect(function (err, client) {
             }).catch((e) => {
                 tweetCount--;
                 tweetErrorList.push(tweet);
-                console.log(tweetCount);
-                console.log(e);
-                console.log(tweet);
+                console.log('catch', tweetCount);
+                console.log('catch', e);
+                console.log('catch', tweet);
                 tweetError++;
                 if (tweetCount === 0) {
                     console.log('tweetList.length', tweetList.length);

@@ -46,7 +46,9 @@ const getMetaFromUrl = (url, extra) => {
 }
 const getMetaFromBody = (body, response_request) => {
     const _cheerio = cheerio.load(body);
-    const meta = {};
+    const meta = {
+        error: false
+    };
     meta.url = _cheerio('meta[property="og:url"]').attr('content');
     if (meta.url === undefined) {
         meta.url = _cheerio('link[rel="canonical"]').attr('href');
@@ -71,11 +73,9 @@ const getMetaFromBody = (body, response_request) => {
     }
     meta.slug = slug(meta.title).toLowerCase();
     if (meta.image === undefined) {
-        console.log(meta);
-        console.log(_cheerio('img'));
-        process.exit(0);
         meta.image = '';
         meta.extension = '';
+        meta.error = true;
     } else {
         if (meta.image.substring(0, 4) !== 'http') {
             if (meta.image.substring(0, 2) === '//') {

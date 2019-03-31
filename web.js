@@ -71,6 +71,21 @@ mongoClient.connect(function (err, client) {
 
     });
 
+    app.get('/search/:text', function (req, res) {
+        tweetCollection.find(
+            {
+                $or: [
+                    {"meta.description": {'$regex': req.params.text}}
+                    , {"meta.title": {'$regex': req.params.text}}
+                ]
+            }
+        ).toArray((err, tweetList) => {
+            console.log(tweetList);
+            res.json(tweetList);
+        });
+
+    });
+
     app.get('/image/:size/:tweetslug.:extension', function (req, res) {
         const size = req.params.size;
         const tweetslug = req.params.tweetslug;
