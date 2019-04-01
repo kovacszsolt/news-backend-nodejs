@@ -72,7 +72,6 @@ mongoClient.connect(function (err, client) {
     });
 
     app.get('/search/:text', function (req, res) {
-        req.params.text = 'Google';
         tweetCollection.find(
             {
                 $or: [
@@ -81,7 +80,6 @@ mongoClient.connect(function (err, client) {
                 ]
             }
         ).toArray((err, tweetList) => {
-            console.log(tweetList);
             res.json(tweetList);
         });
 
