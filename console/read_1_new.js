@@ -78,6 +78,7 @@ insertNewRecords = (newTweets, tweetCollection, records, newPosition) => {
             tags: util.getHastagsFromText(record.text),
             created_at: record.created_at,
             position: newPosition,
+            new: 1,
             status: 1
         });
     });
@@ -89,7 +90,10 @@ insertNewRecords = (newTweets, tweetCollection, records, newPosition) => {
                 if (!fs.existsSync('./_public')) {
                     fs.mkdirSync('./_public');
                 }
-                fs.writeJson('./_public/update.json', {lastAddDate: Math.round(new Date().getTime() / 1000)})
+                fs.writeJson('./_public/update.json', {
+                    position: newPosition,
+                    lastAddDate: Math.round(new Date().getTime() / 1000)
+                })
                     .then(() => {
                         process.exit(0);
                     })
