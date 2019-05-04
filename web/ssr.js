@@ -1,3 +1,6 @@
+const fs = require('fs-extra');
+const handlebars = require('hbs');
+const xmlbuilder = require('xmlbuilder');
 module.exports = class ssrClass {
 
     constructor(tweetCollection, config) {
