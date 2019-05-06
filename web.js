@@ -42,7 +42,8 @@ mongoClient.connect(function (err, client) {
 
     const db = client.db(config.mongo_database);
     const tweetCollection = db.collection('tweet');
-    const web = new webClass(tweetCollection, config);
+    const statusCollection = db.collection('status');
+    const web = new webClass(tweetCollection, statusCollection, config);
     const ssr = new ssrClass(tweetCollection, config);
     appServer.get('/list/', function (req, res) {
         web.list().then((tweetList) => {
@@ -65,6 +66,22 @@ mongoClient.connect(function (err, client) {
 
     appServer.get('/search/:text', function (req, res) {
         web.search(req.params.text).then((tweetList) => {
+            res.json(tweetList);
+        });
+    });
+    appServer.get('/position/gt/:position', function (req, res) {
+        web.positionListGreaterThan(req.params.position).then((tweetList) => {
+            res.json(tweetList);
+        });
+    });
+    appServer.get('/position/list', function (req, res) {
+        web.positionList().then((tweetList) => {
+            res.json(tweetList);
+        });
+    });
+
+    appServer.get('/position/:number', function (req, res) {
+        web.position(req.params.number).then((tweetList) => {
             res.json(tweetList);
         });
     });

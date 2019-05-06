@@ -1,13 +1,38 @@
 module.exports = class webClass {
 
-    constructor(tweetCollection, config) {
+    constructor(tweetCollection, statusCollection, config) {
         this.tweetCollection = tweetCollection;
+        this.statusCollection = statusCollection;
         this.config = config;
     }
 
     list() {
         return new Promise((resolve, reject) => {
             this.tweetCollection.find({status: 3}).toArray(function (err, tweetList) {
+                resolve(tweetList);
+            });
+        });
+    }
+
+    position(positionNumber) {
+        return new Promise((resolve, reject) => {
+            this.tweetCollection.find({position: Number(positionNumber)}).toArray(function (err, tweetList) {
+                resolve(tweetList);
+            });
+        });
+    }
+
+    positionList() {
+        return new Promise((resolve, reject) => {
+            this.statusCollection.find().toArray(function (err, tweetList) {
+                resolve(tweetList);
+            });
+        });
+    }
+
+    positionListGreaterThan(positionNumber) {
+        return new Promise((resolve, reject) => {
+            this.tweetCollection.find({position: {$gt: Number(positionNumber)}}).toArray(function (err, tweetList) {
                 resolve(tweetList);
             });
         });
