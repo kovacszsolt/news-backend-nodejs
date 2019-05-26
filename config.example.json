@@ -43,5 +43,15 @@
       "height": 20,
       "backgroundcolor": "#FFA500"
     }
-  ]
+  ],
+  "admin": {
+    "port": 8070,
+    "no_header_url": [
+      "/",
+      "session/add/"
+    ],
+    "no_user_url": [
+      "user/hello1/"
+    ]
+  }
 }

@@ -94,7 +94,6 @@ mongoClient.connect(function (err, client) {
         });
     });
 
-
     ssrServer.get('/sitemap.xml', function (req, res) {
         ssr.sitemap().then((sitemap) => {
             res.send(sitemap.end({pretty: true}));
