@@ -16,9 +16,9 @@ build:
     CI_REGISTRY: registry.gitlab.com
     CI_REGISTRY_IMAGE: registry.gitlab.com/smith.zsolt/news-backend-nodejs
   script:
-    - docker login -u $DEPLOY_DOCKER_USER -p $DEPLOY_DOCKER_PASSWORD $DEPLOY_DOCKER_HOST
-    - docker build --pull -t "$DEPLOY_DOCKER_IMAGE_NAME" .
-    - docker push "$DEPLOY_DOCKER_IMAGE_NAME"
+    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY
+    - docker build --pull -t "${CI_REGISTRY_IMAGE}:latest" .
+    - docker push "${CI_REGISTRY_IMAGE}:latest"
   only:
     - master
 
