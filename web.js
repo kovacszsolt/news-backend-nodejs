@@ -1,28 +1,26 @@
 const config = require('./common/config');
 const express = require('express');
 const bodyParser = require('body-parser');
-const fs = require('fs-extra');
-const handlebars = require('hbs');
-const xmlbuilder = require('xmlbuilder');
+const webClass = require('./web/web');
+const ssrClass = require('./web/ssr');
+const appServer = express();
+const ssrServer = express();
 
-const app = express();
-const ssr = express();
+appServer.set('port', config.port);
+ssrServer.set('port', config.ssr_port);
 
-app.set('port', config.port);
-ssr.set('port', config.ssr_port);
-
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({extended: true}));
-app.use(function (req, res, next) {
+appServer.use(bodyParser.json());
+appServer.use(bodyParser.urlencoded({extended: true}));
+appServer.use(function (req, res, next) {
     res.setHeader('Access-Control-Allow-Origin', config.allow_origin);
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
     res.setHeader("Access-Control-Allow-Headers", "*");
     res.setHeader('Access-Control-Allow-Credentials', true);
     next();
 });
-ssr.use(bodyParser.json());
-ssr.use(bodyParser.urlencoded({extended: true}));
-ssr.use(function (req, res, next) {
+ssrServer.use(bodyParser.json());
+ssrServer.use(bodyParser.urlencoded({extended: true}));
+ssrServer.use(function (req, res, next) {
     res.setHeader('Access-Control-Allow-Origin', config.allow_origin);
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
     res.setHeader("Access-Control-Allow-Headers", "*");
@@ -30,161 +28,103 @@ ssr.use(function (req, res, next) {
     next();
 });
 
-app.get('/', function (req, res) {
+appServer.get('/', function (req, res) {
     res.send({data: 'hello backend world'});
 });
 
-ssr.get('/', function (req, res) {
+ssrServer.get('/', function (req, res) {
     res.send({data: 'hello ssr world'});
 });
 
 const MongoClient = require('mongodb').MongoClient;
 const mongoClient = new MongoClient(config.mongo_server, {useNewUrlParser: true});
 mongoClient.connect(function (err, client) {
+
     const db = client.db(config.mongo_database);
     const tweetCollection = db.collection('tweet');
-    const settingsCollection = db.collection('setttings');
-
-    app.get('/list/', function (req, res) {
-        tweetCollection.find({status: 3}).toArray(function (err, tweetList) {
+    const statusCollection = db.collection('status');
+    const web = new webClass(tweetCollection, statusCollection, config);
+    const ssr = new ssrClass(tweetCollection, config);
+    appServer.get('/list/', function (req, res) {
+        web.list().then((tweetList) => {
             res.json(tweetList);
         });
     });
 
-    app.get('/image/tag/:tag.jpg', function (req, res) {
-        const fileName = process.cwd() + config.image_store + '/tag/' + req.params.tag + '.jpg';
-        if (fs.existsSync(fileName)) {
-            const requestFileName = config.image_store + '/tag/' + req.params.tag + '.jpg';
+    appServer.get('/image/tag/:tag.jpg', function (req, res) {
+        web.findTagImage(req.params.tag).then((requestFileName) => {
             res.sendFile(requestFileName, {root: './'}, function (err) {
             });
-        } else {
-            res.sendFile(config.default_image, {root: './'}, function (err) {
-            });
-        }
+        });
     });
 
-    app.get('/update', function (req, res) {
-        console.log('wee');
+    appServer.get('/update', function (req, res) {
         const fileName = '/_public/update.json';
         res.sendFile(fileName, {root: './'}, function (err) {
         });
-
     });
 
-    app.get('/search/:text', function (req, res) {
-        tweetCollection.find(
-            {
-                $or: [
-                    {"meta.title": new RegExp(req.params.text, "i")},
-                    {"meta.description": new RegExp(req.params.text, "i")}
-                ]
-            }
-        ).toArray((err, tweetList) => {
+    appServer.get('/search/:text', function (req, res) {
+        web.search(req.params.text).then((tweetList) => {
             res.json(tweetList);
         });
-
+    });
+    appServer.get('/position/gt/:position', function (req, res) {
+        web.positionListGreaterThan(req.params.position).then((tweetList) => {
+            res.json(tweetList);
+        });
+    });
+    appServer.get('/position/list', function (req, res) {
+        web.positionList().then((tweetList) => {
+            res.json(tweetList);
+        });
     });
 
-    app.get('/image/:size/:tweetslug.:extension', function (req, res) {
-        const size = req.params.size;
-        const tweetslug = req.params.tweetslug;
-        const extension = req.params.extension;
-        const fileName = process.cwd() + config.image_store + '/' + size + '/' + tweetslug + '.' + extension;
-        console.log(fileName);
-        if (fs.existsSync(fileName)) {
-            const requestFileName = config.image_store + '/' + size + '/' + tweetslug + '.' + extension;
+    appServer.get('/position/:number', function (req, res) {
+        web.position(req.params.number).then((tweetList) => {
+            res.json(tweetList);
+        });
+    });
+
+    appServer.get('/image/:size/:tweetslug.:extension', function (req, res) {
+
+        web.findTweetImage(req.params.size, req.params.tweetslug, req.params.extension).then((requestFileName) => {
             res.sendFile(requestFileName, {root: './'}, function (err) {
             });
-        } else {
-            console.log(fileName, 'ERROR', 'NOFILE');
-            res.sendFile(config.default_image, {root: './'}, function (err) {
-            });
-        }
-    });
-
-
-    ssr.get('/sitemap.xml', function (req, res) {
-        const output = [];
-        tweetCollection.find().toArray(function (err, tweetList) {
-            tweetList.forEach((tweet) => {
-                output.push({
-                    'url': {
-                        'loc': config.ssr_domain + tweet.slug,
-                        'lastmod': tweet.createTime.getFullYear() + '-' + tweet.createTime.getMonth() + '-' + tweet.createTime.getDate(),
-                        'priority': 0.8
-                    }
-                });
-            });
-            var root = xmlbuilder.create(output);
-            res.send(root.end({pretty: true}));
         });
     });
 
-    ssr.get('/tag/:tagslug', function (req, res) {
-        const tagslug = req.params.tagslug;
-        fs.readFile('ssr.html', 'utf8', (err, data) => {
-            if (err) throw err;
-            const template = handlebars.compile(data, {strict: true});
-            const result = template({
-                title: tagslug + ' List',
-                description: tagslug + ' List',
-                url: config.ssr_domain + 'tag/' + tagslug,
-                image: config.ssr_imagepath + 'tag/' + tagslug + '.jpg'
-            });
+    ssrServer.get('/sitemap.xml', function (req, res) {
+        ssr.sitemap().then((sitemap) => {
+            res.send(sitemap.end({pretty: true}));
+        });
+    });
+
+    ssrServer.get('/tag/:tagslug', function (req, res) {
+
+        ssr.tag(req.params.tagslug).then((result) => {
             res.send(result);
         });
     });
 
-    ssr.get('/:tweetslug', function (req, res) {
-        const tweetslug = req.params.tweetslug;
-        tweetCollection.find({'slug': tweetslug}).toArray(function (err, tweetList) {
-            if (tweetList.length === 1) {
-                const tweet = tweetList[0];
-                fs.readFile('ssr.html', 'utf8', (err, data) => {
-                    if (err) throw err;
-                    const template = handlebars.compile(data, {strict: true});
-                    const result = template({
-                        title: tweet.title,
-                        description: tweet.description,
-                        url: config.ssr_domain + tweet.slug,
-                        image: config.ssr_imagepath + 'size1/' + tweet.slug + '.' + tweet.extension
-                    });
-                    res.send(result);
-                });
-            } else {
-                fs.readFile('ssr.html', 'utf8', (err, data) => {
-                    if (err) throw err;
-                    const template = handlebars.compile(data, {strict: true});
-                    const result = template({
-                        title: 'ITCrowd Not Found',
-                        description: 'ITCrowd Not Found'
-                    });
-                    res.send(result);
-                });
-            }
-        });
-    });
-
-    ssr.get('/', function (req, res) {
-        fs.readFile('ssr.html', 'utf8', (err, data) => {
-            if (err) throw err;
-            const template = handlebars.compile(data, {strict: true});
-            const result = template({
-                title: tagslug + ' List',
-                description: tagslug + ' List',
-                url: config.ssr_domain,
-                image: config.ssr_imagepath + 'deafult.jpg'
-            });
+    ssrServer.get('/:tweetslug', function (req, res) {
+        ssr.tweet(req.params.tweetslug).then((result) => {
             res.send(result);
         });
     });
 
-    app.listen(app.get('port'), function () {
-        console.log('running on port', app.get('port'))
-    })
+    ssrServer.get('/', function (req, res) {
+        ssr.root().then((result) => {
+            res.send(result);
+        });
+    });
 
-    ssr.listen(ssr.get('port'), function () {
-        console.log('running on port', ssr.get('port'))
-    })
+    appServer.listen(appServer.get('port'), function () {
+        console.log('running on port', appServer.get('port'))
+    });
+
+    ssrServer.listen(ssrServer.get('port'), function () {
+        console.log('running on port', ssrServer.get('port'))
+    });
 
 });

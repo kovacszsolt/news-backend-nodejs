@@ -17,14 +17,8 @@ const multer = require('multer');
 
 const app = express();
 
-app.set('port', config.port);
-const TwitterAPI = require('twitter');
-const TwitterClient = new TwitterAPI({
-    consumer_key: config.twitter_consumer_key,
-    consumer_secret: config.twitter_consumer_secret,
-    access_token_key: config.twitter_access_token_key,
-    access_token_secret: config.twitter_access_token_secret
-});
+app.set('port', config.admin.port);
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(function (req, res, next) {

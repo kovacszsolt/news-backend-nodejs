@@ -25,6 +25,8 @@ const config = () => {
         _config.read_count = getParam('READ_COUNT');
         _config.image_sizes = JSON.parse(getParam('IMAGE_SIZES'));
 
+        _config.admin_port = getParam('ADMIN_PORT');
+
         Object.keys(_config).forEach((_configName) => {
             if (_config[_configName] === '') {
 
