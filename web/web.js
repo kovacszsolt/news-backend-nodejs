@@ -1,3 +1,4 @@
+const fs = require('fs-extra');
 module.exports = class webClass {
 
     constructor(tweetCollection, statusCollection, config) {
