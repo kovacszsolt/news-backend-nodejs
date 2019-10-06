@@ -3,11 +3,15 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const webClass = require('./web/web');
 const ssrClass = require('./web/ssr');
+const swaggerClass = require('./swagger/web');
 const appServer = express();
 const ssrServer = express();
 
 appServer.set('port', config.port);
 ssrServer.set('port', config.ssr_port);
+
+const swagger = new swaggerClass(express, bodyParser, config.swagger);
+swagger.start();
 
 appServer.use(bodyParser.json());
 appServer.use(bodyParser.urlencoded({extended: true}));
@@ -28,6 +32,7 @@ ssrServer.use(function (req, res, next) {
     next();
 });
 
+
 appServer.get('/', function (req, res) {
     res.send({data: 'hello backend world'});
 });
@@ -37,10 +42,12 @@ ssrServer.get('/', function (req, res) {
 });
 
 const MongoClient = require('mongodb').MongoClient;
-const mongoClient = new MongoClient(config.mongo_server, {useNewUrlParser: true});
+const mongoClient = new MongoClient(config.mongo_server, {useUnifiedTopology: true, useNewUrlParser: true});
 mongoClient.connect(function (err, client) {
 
     const db = client.db(config.mongo_database);
+
+
     const tweetCollection = db.collection('tweet');
     const statusCollection = db.collection('status');
     const web = new webClass(tweetCollection, statusCollection, config);
@@ -125,6 +132,13 @@ mongoClient.connect(function (err, client) {
 
     ssrServer.listen(ssrServer.get('port'), function () {
         console.log('running on port', ssrServer.get('port'))
+    });
+
+    appServer.get('/list/:page', function (req, res) {
+        console.log('req.params.page',req.params.page);
+        web.listPage(req.params.page).then((tweetList) => {
+            res.json(tweetList);
+        });
     });
 
 });

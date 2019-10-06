@@ -1,7 +1,10 @@
 const fs = require('fs-extra');
 module.exports = class webClass {
 
+
+
     constructor(tweetCollection, statusCollection, config) {
+        this.pageSize = 2;
         this.tweetCollection = tweetCollection;
         this.statusCollection = statusCollection;
         this.config = config;
@@ -53,7 +56,7 @@ module.exports = class webClass {
 
     search(text) {
         return new Promise((resolve, reject) => {
-            tweetCollection.find(
+            this.tweetCollection.find(
                 {
                     $or: [
                         {"meta.title": new RegExp(text, "i")},
@@ -75,6 +78,15 @@ module.exports = class webClass {
                 console.log(fileName, 'ERROR', 'NOFILE');
                 resolve(this.config.default_image);
             }
+        });
+    }
+
+    listPage(pagenumber) {
+        console.log('pagenumber', pagenumber);
+        return new Promise((resolve, reject) => {
+            this.tweetCollection.find({status: 3}).limit(this.pageSize).skip(this.pageSize * (pagenumber-1)).toArray(function (err, tweetList) {
+                resolve(tweetList);
+            });
         });
     }
 }

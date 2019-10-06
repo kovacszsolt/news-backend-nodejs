@@ -23,5 +23,9 @@
     "slug": "^0.9.2",
     "twitter": "^1.7.1",
     "xmlbuilder": "^10.1.1"
+  },
+  "devDependencies": {
+    "swagger-jsdoc": "^3.2.9",
+    "swagger-ui-express": "^4.0.7"
   }
 }
