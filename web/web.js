@@ -2,7 +2,6 @@ const fs = require('fs-extra');
 module.exports = class webClass {
 
 
-
     constructor(tweetCollection, statusCollection, config) {
         this.pageSize = 2;
         this.tweetCollection = tweetCollection;
@@ -81,10 +80,9 @@ module.exports = class webClass {
         });
     }
 
-    listPage(pagenumber) {
-        console.log('pagenumber', pagenumber);
+    listPage(pageNumber, pageSize) {
         return new Promise((resolve, reject) => {
-            this.tweetCollection.find({status: 3}).limit(this.pageSize).skip(this.pageSize * (pagenumber-1)).toArray(function (err, tweetList) {
+            this.tweetCollection.find({status: 3}).limit(parseInt(pageSize)).skip(pageSize * (parseInt( pageNumber) - 1)).toArray(function (err, tweetList) {
                 resolve(tweetList);
             });
         });

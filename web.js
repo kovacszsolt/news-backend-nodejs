@@ -134,9 +134,8 @@ mongoClient.connect(function (err, client) {
         console.log('running on port', ssrServer.get('port'))
     });
 
-    appServer.get('/list/:page', function (req, res) {
-        console.log('req.params.page',req.params.page);
-        web.listPage(req.params.page).then((tweetList) => {
+    appServer.get('/list/:page/:pagesize', function (req, res) {
+        web.listPage(req.params.page, req.params.pagesize).then((tweetList) => {
             res.json(tweetList);
         });
     });

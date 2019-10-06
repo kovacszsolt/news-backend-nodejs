@@ -1,13 +1,18 @@
 /**
  * @swagger
- * /list/{page}:
+ * /list/{page}/{pagenumber}:
  *    get:
  *      summary: Search
  *       - application/json
  *      tags: [News]
  *      parameters:
  *       - name: page
- *         description: pagenumber first page=1
+ *         description: page first page=1
+ *         in: path
+ *         required: true
+ *         type: string
+ *       - name: pagenumber
+ *         description: number of elements 
  *         in: path
  *         required: true
  *         type: string
