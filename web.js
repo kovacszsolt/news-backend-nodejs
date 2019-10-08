@@ -71,8 +71,8 @@ mongoClient.connect(function (err, client) {
         });
     });
 
-    appServer.get('/search/:text', function (req, res) {
-        web.search(req.params.text).then((tweetList) => {
+    appServer.get('/search/:text/:page/:pagesize', function (req, res) {
+        web.search(req.params.text,req.params.page,req.params.pagesize).then((tweetList) => {
             res.json(tweetList);
         });
     });
@@ -90,6 +90,13 @@ mongoClient.connect(function (err, client) {
     appServer.get('/position/:number', function (req, res) {
         web.position(req.params.number).then((tweetList) => {
             res.json(tweetList);
+        });
+    });
+
+    appServer.get('/tag/:tagslug/:page/:pagesize', function (req, res) {
+
+        web.tag(req.params.tagslug,req.params.page,req.params.pagesize).then((result) => {
+            res.send(result);
         });
     });
 

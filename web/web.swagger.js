@@ -64,7 +64,7 @@
 
 /**
  * @swagger
- * /search/{text}:
+ * /search/{text}/{page}/{pagenumber}:
  *    get:
  *      summary: Search
  *       - application/json
@@ -72,6 +72,47 @@
  *      parameters:
  *       - name: text
  *         description: Search text
+ *         in: path
+ *         required: true
+ *         type: string
+ *       - name: page
+ *         description: page first page=1
+ *         in: path
+ *         required: true
+ *         type: string
+ *       - name: pagenumber
+ *         description: number of elements
+ *         in: path
+ *         required: true
+ *         type: string
+ *      properties:
+ *        id:
+ *          type: string
+ *      responses:
+ *       200:
+ *         description: "{status: ok}"
+ */
+
+/**
+ * @swagger
+ * /tag/{tag}/{page}/{pagenumber}:
+ *    get:
+ *      summary: Search
+ *       - application/json
+ *      tags: [News]
+ *      parameters:
+ *       - name: tag
+ *         description: Tag text
+ *         in: path
+ *         required: true
+ *         type: string
+ *       - name: page
+ *         description: page first page=1
+ *         in: path
+ *         required: true
+ *         type: string
+ *       - name: pagenumber
+ *         description: number of elements
  *         in: path
  *         required: true
  *         type: string
