@@ -9,6 +9,15 @@ module.exports = class webClass {
         this.config = config;
     }
 
+    slug(tweetSlug) {
+        console.log('tweetSlug',tweetSlug);
+        return new Promise((resolve, reject) => {
+            this.tweetCollection.find({'meta.slug': tweetSlug}).toArray(function (err, tweetList) {
+                resolve(tweetList[0]);
+            });
+        });
+    }
+
     list() {
         return new Promise((resolve, reject) => {
             this.tweetCollection.find({status: 3}).toArray(function (err, tweetList) {

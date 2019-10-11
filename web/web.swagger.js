@@ -1,5 +1,26 @@
 /**
  * @swagger
+ * /{slug}:
+ *    get:
+ *      summary: Get Tweet by Slug
+ *       - application/json
+ *      tags: [News]
+ *      parameters:
+ *       - name: slug
+ *         description: Slug
+ *         in: path
+ *         required: true
+ *         type: string
+ *      properties:
+ *        id:
+ *          type: string
+ *      responses:
+ *       200:
+ *         description: "{status: ok}"
+ */
+
+/**
+ * @swagger
  * /list/{page}/{pagenumber}:
  *    get:
  *      summary: Search
@@ -12,7 +33,7 @@
  *         required: true
  *         type: string
  *       - name: pagenumber
- *         description: number of elements 
+ *         description: number of elements
  *         in: path
  *         required: true
  *         type: string

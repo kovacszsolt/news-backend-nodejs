@@ -58,6 +58,12 @@ mongoClient.connect(function (err, client) {
         });
     });
 
+    appServer.get('/:slug', function (req, res) {
+        web.slug(req.params.slug).then((tweetList) => {
+            res.json(tweetList);
+        });
+    });
+
     appServer.get('/image/tag/:tag.jpg', function (req, res) {
         web.findTagImage(req.params.tag).then((requestFileName) => {
             res.sendFile(requestFileName, {root: './'}, function (err) {
