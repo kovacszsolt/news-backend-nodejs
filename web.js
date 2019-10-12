@@ -3,11 +3,15 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const webClass = require('./web/web');
 const ssrClass = require('./web/ssr');
+const swaggerClass = require('./swagger/web');
 const appServer = express();
 const ssrServer = express();
 
 appServer.set('port', config.port);
 ssrServer.set('port', config.ssr_port);
+
+const swagger = new swaggerClass(express, bodyParser, config.swagger);
+swagger.start();
 
 appServer.use(bodyParser.json());
 appServer.use(bodyParser.urlencoded({extended: true}));
@@ -28,6 +32,7 @@ ssrServer.use(function (req, res, next) {
     next();
 });
 
+
 appServer.get('/', function (req, res) {
     res.send({data: 'hello backend world'});
 });
@@ -37,16 +42,24 @@ ssrServer.get('/', function (req, res) {
 });
 
 const MongoClient = require('mongodb').MongoClient;
-const mongoClient = new MongoClient(config.mongo_server, {useNewUrlParser: true});
+const mongoClient = new MongoClient(config.mongo_server, {useUnifiedTopology: true, useNewUrlParser: true});
 mongoClient.connect(function (err, client) {
 
     const db = client.db(config.mongo_database);
+
+
     const tweetCollection = db.collection('tweet');
     const statusCollection = db.collection('status');
     const web = new webClass(tweetCollection, statusCollection, config);
     const ssr = new ssrClass(tweetCollection, config);
     appServer.get('/list/', function (req, res) {
         web.list().then((tweetList) => {
+            res.json(tweetList);
+        });
+    });
+
+    appServer.get('/:slug', function (req, res) {
+        web.slug(req.params.slug).then((tweetList) => {
             res.json(tweetList);
         });
     });
@@ -64,8 +77,8 @@ mongoClient.connect(function (err, client) {
         });
     });
 
-    appServer.get('/search/:text', function (req, res) {
-        web.search(req.params.text).then((tweetList) => {
+    appServer.get('/search/:text/:page/:pagesize', function (req, res) {
+        web.search(req.params.text,req.params.page,req.params.pagesize).then((tweetList) => {
             res.json(tweetList);
         });
     });
@@ -83,6 +96,13 @@ mongoClient.connect(function (err, client) {
     appServer.get('/position/:number', function (req, res) {
         web.position(req.params.number).then((tweetList) => {
             res.json(tweetList);
+        });
+    });
+
+    appServer.get('/tag/:tagslug/:page/:pagesize', function (req, res) {
+
+        web.tag(req.params.tagslug,req.params.page,req.params.pagesize).then((result) => {
+            res.send(result);
         });
     });
 
@@ -125,6 +145,12 @@ mongoClient.connect(function (err, client) {
 
     ssrServer.listen(ssrServer.get('port'), function () {
         console.log('running on port', ssrServer.get('port'))
+    });
+
+    appServer.get('/list/:page/:pagesize', function (req, res) {
+        web.listPage(req.params.page, req.params.pagesize).then((tweetList) => {
+            res.json(tweetList);
+        });
     });
 
 });

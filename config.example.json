@@ -53,5 +53,21 @@
     "no_user_url": [
       "user/hello1/"
     ]
+  },
+  "swagger": {
+    "start": "1",
+    "allow_origin": "*",
+    "schemes": [
+      "https",
+      "http"
+    ],
+    "port": "8000",
+    "host": "localhost:8090",
+    "basePath": "/",
+    "url": "/",
+    "files": [
+      "admin/*.swagger.js",
+      "admin/*/*.swagger.js"
+    ]
   }
 }
