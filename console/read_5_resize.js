@@ -12,7 +12,8 @@ config.image_sizes.forEach((imageSize) => {
     console.log('newSizeFiles', newSizeFiles);
     Promise.all(
         newSizeFiles.map((newSizeFile) => {
-                image.resize(process.cwd() + config.image_store + '/original/' + newSizeFile, sizePath + util.getFileName(newSizeFile) + '.webp', imageSize.width, imageSize.height)
+                image.resize(process.cwd() + config.image_store + '/original/' + newSizeFile, sizePath + util.getFileName(newSizeFile) + '.webp', imageSize.width, imageSize.height);
+                image.resize(process.cwd() + config.image_store + '/original/' + newSizeFile, sizePath + util.getFileName(newSizeFile) + '.' + util.getFileExtension(newSizeFile), imageSize.width, imageSize.height);
             }
         )).then(() => {
         _count--;
