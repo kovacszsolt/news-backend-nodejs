@@ -30,3 +30,5 @@ deploy:
     - sshpass -V
     - export SSHPASS=$DEPLOY_REMOTE_PASSWORD
     - sshpass -e ssh -oStrictHostKeyChecking=no $DEPLOY_REMOTE_USERNAME@$DEPLOY_REMOTE_HOST '$DEPLOY_REMOTE_SCRIPT'
+  only:
+    - master
