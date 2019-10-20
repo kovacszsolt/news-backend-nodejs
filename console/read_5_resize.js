@@ -9,9 +9,11 @@ config.image_sizes.forEach((imageSize) => {
     fs.ensureDirSync(sizePath);
     const filesSize = fs.readdirSync(sizePath);
     const newSizeFiles = util.arrayDiff(filesOriginal, filesSize);
+    console.log('newSizeFiles', newSizeFiles);
     Promise.all(
-        newSizeFiles.map(newSizeFile =>
-            image.resize(process.cwd() + config.image_store + '/original/' + newSizeFile, sizePath + newSizeFile, imageSize.width, imageSize.height)
+        newSizeFiles.map((newSizeFile) => {
+                image.resize(process.cwd() + config.image_store + '/original/' + newSizeFile, sizePath + util.getFileName(newSizeFile) + '.webp', imageSize.width, imageSize.height)
+            }
         )).then(() => {
         _count--;
         console.log(_count);

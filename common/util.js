@@ -56,17 +56,27 @@ const rmDirectory = (dirPath) => {
     fs.rmdirSync(dirPath);
 };
 
-const getFileExtension = (file) => {
-    let _return = file.split('.').slice(file.split('.').length - 1).toString();
-    if (_return.indexOf('?') !== -1) {
-        _return = _return.substring(0, _return.indexOf('?'));
+
+const getFileName = (file) => {
+    if (file.indexOf('?') !== -1) {
+        file = file.substring(0, file.indexOf('?'));
     }
-    return _return;
+    file = file.split('.');
+    file.pop();
+    return file.join('.');
+}
+
+const getFileExtension = (file) => {
+    if (file.indexOf('?') !== -1) {
+        file = file.substring(0, file.indexOf('?'));
+    }
+    file = file.split('.');
+    return file.pop();
 }
 
 const downloadFromURL = (source, target) => {
     return new Promise((resolve, reject) => {
-        console.log('source',source);
+        console.log('source', source);
         let url = source;
         if (url !== undefined) {
             if (url.substring(0, 2) === '//') {
@@ -103,5 +113,6 @@ module.exports = {
     rmDirectory,
     downloadFromURL,
     exit,
-    arrayDiff
+    arrayDiff,
+    getFileName
 };

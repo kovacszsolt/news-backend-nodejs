@@ -25,6 +25,10 @@ mongoClient.connect(function (err, client) {
                         }
                     });
                 }).catch((a) => {
+                    tweetCount--;
+                    if (tweetCount === 0) {
+                        process.exit(0);
+                    }
                     console.log('error', a);
                 });
             });
